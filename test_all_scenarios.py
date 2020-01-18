@@ -100,15 +100,15 @@ class TestScenario5(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
 
-    # def test_threshold_matters_3(self):
-    #     # Test to show that threshold level matters, 
-    #     # it will not allow class "c" to be under class "a" 
-    #     # if class "z" with probability 0.66 is not present
-    #     # when threshold is set to <= 0.66
-    #     rule_composer_class = RuleComposer(threshold=1, train_page='scenario_4/train.html')
-    #     rule_composer_class.compare_test_page(test_page='scenario_4/test.html')
+    def test_threshold_matters_5(self):
+        # Test to show that threshold level matters, 
+        # it will not allow class "c" to be under class "a" 
+        # if class "z" with probability 0.66 is not present
+        # when threshold is set to <= 0.66
+        rule_composer_class = RuleComposer(threshold=0, train_page='scenario_5/train.html')
+        rule_composer_class.compare_test_page(test_page='scenario_5/test.html')
 
-    #     # rule_composer_class.get_data()
+        # rule_composer_class.get_data()
         
-    #     errors = rule_composer_class.get_line_number_errors()
-    #     self.assertEqual(list(errors), [])
+        errors = rule_composer_class.get_line_number_errors()
+        self.assertEqual(list(errors), [5])
