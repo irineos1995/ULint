@@ -76,7 +76,7 @@ class RuleComposer():
                                 parents = [()]
                             passed, errors = class_obj.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline)
                             if not passed:
-                                print("Error in line: {}. Errors: {}".format(child.sourceline, errors))
+                                print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                     else:
                         continue
                     self.get_parents_recursively_for_test(child, class_obj)

@@ -224,7 +224,8 @@ class TAG():
                     if local_flag:
                         return True, ""
             self.line_number_with_errors.add(source_line)
-            return False, "Parents order does not exist!"
+            # return False, "Parents order does not exist!"
+            return False, ""
 
         else:
             return True, ""
