@@ -37,6 +37,28 @@ class TAG():
                 return False
         return True
 
+    def get_encountered_parent_orders_and_depths(self):
+        # still need to search for unsorted child in keys of dict
+        # still need to search for unsorted parent in keys of dict
+        parent_child_depth_relation = {}
+        child_parents_dict = self.child_parents_dict
+        for child, data in child_parents_dict.items():
+            child = tuple(sorted(child))
+            parents_lists = data['encountered_parent_orders']
+            for parent_list in parents_lists:
+                for depth, parent in enumerate(parent_list):
+                    parent = tuple(sorted(parent))
+                    if parent not in parent_child_depth_relation:
+                        parent_child_depth_relation[parent] = {
+                            child : {depth+1}
+                        }
+                    else:
+                        if child in parent_child_depth_relation[parent]:
+                            parent_child_depth_relation[parent][child].add(depth+1)
+                        else:
+                            parent_child_depth_relation[parent][child] = {depth+1}
+        return parent_child_depth_relation
+
 
     def add_parents(self, child_tuple, parents_list):
         '''

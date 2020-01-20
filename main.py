@@ -40,6 +40,9 @@ class RuleComposer():
     def get_data(self):
         return self.TAG_OBJECT.get_data()
 
+    def get_encountered_parent_orders_and_depths(self):
+        return self.TAG_OBJECT.get_encountered_parent_orders_and_depths()
+
     def get_parents_recursively(self, tree, class_obj):
         if not tree:
             return
