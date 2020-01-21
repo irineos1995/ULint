@@ -72,8 +72,14 @@ class TestScenario5(unittest.TestCase):
         rule_composer_class = RuleComposer(threshold=0, train_page='scenario_5/train.html')
         rule_composer_class.compare_test_page(test_page='scenario_5/test.html')
 
-        for key, value in rule_composer_class.get_encountered_parent_orders_and_depths().items():
-            print('{} -----> {}'.format(key, value))
+        # dictionary = rule_composer_class.get_encountered_parent_orders_and_depths()
+        # print(dictionary)
+        # for key, value in dictionary.items():
+        #     print('{} -----> {}'.format(key, value))
+
+        rule_composer_class.plot_directed_graph()
         
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [5])
+
+        
