@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from networkx_viewer import Viewer
 from pyvis import network as net
+import random
 
 def plot_graph(G):
     plt.figure(figsize=(20,8))
@@ -42,10 +43,16 @@ def draw_graph3(networkx_graph,notebook=False,output_filename='graph.html',show_
     
     # make a pyvis network
     pyvis_graph = net.Network(notebook=notebook,directed=True, width="100%", height="100%")
-    
+    colors_used = []
+    r = lambda: random.randint(0,255)
     # for each node and its attributes in the networkx graph
     for node,node_attrs in networkx_graph.nodes(data=True):
+        color = '#%02X%02X%02X' % (r(),r(),r())
+        while color in colors_used:
+            color = '#%02X%02X%02X' % (r(),r(),r())
+        colors_used.append(color)
         node_attrs['title'] = node
+        node_attrs['color'] = color
         pyvis_graph.add_node(node,**node_attrs)
         
     # for each edge and its attributes in the networkx graph
@@ -57,7 +64,7 @@ def draw_graph3(networkx_graph,notebook=False,output_filename='graph.html',show_
         if not 'value' in edge_attrs and not 'width' in edge_attrs and 'depth' in edge_attrs:
             # place at key 'value' the weight of the edge
             # edge_attrs['title']= "From {} to {} {}".format(source, target, edge_attrs['depth'])
-            title = "From {} to {} {}".format(source, target, edge_attrs['depth'])
+            title = "Parent: {} Child: {}. Depths: {}".format(source, target, edge_attrs['depth'])
         # add the edge
         for d in data:
             if d['from'] == target and d['to'] == source:

@@ -1,9 +1,7 @@
 from bs4 import BeautifulSoup
-from bs4 import NavigableString, Tag
+from bs4 import NavigableString, Tag, Doctype
 import networkx as nx
 from graph_base_case import plot_graph, draw_graph3
-
-
 from tidy import TAG
 
 class RuleComposer():
@@ -15,10 +13,10 @@ class RuleComposer():
         with open(train_page, 'r') as tr_p:
             train_soup = BeautifulSoup(tr_p, 'html.parser')
 
-
             for child in train_soup.childGenerator():
-                self.get_parents_recursively(child, self.TAG_OBJECT)
-                break
+                if isinstance(child, Tag):
+                    self.get_parents_recursively(child, self.TAG_OBJECT)
+                    break
 
     def compare_test_page(self, test_page):
         with open(test_page, 'r') as test_p:

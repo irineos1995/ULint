@@ -71,15 +71,13 @@ class TestScenario5(unittest.TestCase):
     def test_threshold_matters_5(self):
         rule_composer_class = RuleComposer(threshold=0, train_page='scenario_5/train.html')
         rule_composer_class.compare_test_page(test_page='scenario_5/test.html')
-
-        # dictionary = rule_composer_class.get_encountered_parent_orders_and_depths()
-        # print(dictionary)
-        # for key, value in dictionary.items():
-        #     print('{} -----> {}'.format(key, value))
-
-        rule_composer_class.plot_directed_graph()
         
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [5])
+
+class TestGraphPlot(unittest.TestCase):
+    def test_plot_graph(self):
+        rule_composer_class = RuleComposer(threshold=0, train_page='scenario_5/big_training_data.html')
+        rule_composer_class.plot_directed_graph()
 
         
