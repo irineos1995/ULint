@@ -1,0 +1,77 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"color": "#D9578B", "id": "()", "label": "()", "shape": "dot", "title": "()"}, {"color": "#6058ED", "id": "(\u0027a\u0027, \u0027y\u0027)", "label": "(\u0027a\u0027, \u0027y\u0027)", "shape": "dot", "title": "(\u0027a\u0027, \u0027y\u0027)"}, {"color": "#E61A59", "id": "(\u0027b\u0027, \u0027c\u0027)", "label": "(\u0027b\u0027, \u0027c\u0027)", "shape": "dot", "title": "(\u0027b\u0027, \u0027c\u0027)"}, {"color": "#390EFD", "id": "(\u0027a\u0027, \u0027x\u0027)", "label": "(\u0027a\u0027, \u0027x\u0027)", "shape": "dot", "title": "(\u0027a\u0027, \u0027x\u0027)"}, {"color": "#C8C2F7", "id": "(\u0027ni\u0027,)", "label": "(\u0027ni\u0027,)", "shape": "dot", "title": "(\u0027ni\u0027,)"}, {"color": "#0608A1", "id": "(\u0027c\u0027,)", "label": "(\u0027c\u0027,)", "shape": "dot", "title": "(\u0027c\u0027,)"}, {"color": "#BFF1C5", "id": "(\u0027y\u0027, \u0027z\u0027)", "label": "(\u0027y\u0027, \u0027z\u0027)", "shape": "dot", "title": "(\u0027y\u0027, \u0027z\u0027)"}, {"color": "#0AC667", "id": "(\u0027i\u0027,)", "label": "(\u0027i\u0027,)", "shape": "dot", "title": "(\u0027i\u0027,)"}, {"color": "#15E039", "id": "(\u0027q\u0027,)", "label": "(\u0027q\u0027,)", "shape": "dot", "title": "(\u0027q\u0027,)"}]);
+        edges = new vis.DataSet([{"arrows": "to", "depth": "{1}", "from": "()", "title": "Parent: () Child: (\u0027a\u0027, \u0027y\u0027). Depths: {1}", "to": "(\u0027a\u0027, \u0027y\u0027)"}, {"arrows": "to", "depth": "{1, 4}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027b\u0027, \u0027c\u0027). Depths: {1, 4}", "to": "(\u0027b\u0027, \u0027c\u0027)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027a\u0027, \u0027x\u0027). Depths: {2}", "to": "(\u0027a\u0027, \u0027x\u0027)"}, {"arrows": "to", "depth": "{3}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027ni\u0027,). Depths: {3}", "to": "(\u0027ni\u0027,)"}, {"arrows": "to", "depth": "{3, 5}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027c\u0027,). Depths: {3, 5}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027y\u0027, \u0027z\u0027). Depths: {1}", "to": "(\u0027y\u0027, \u0027z\u0027)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027i\u0027,). Depths: {2}", "to": "(\u0027i\u0027,)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027a\u0027, \u0027y\u0027)", "title": "Parent: (\u0027a\u0027, \u0027y\u0027) Child: (\u0027q\u0027,). Depths: {2}", "to": "(\u0027q\u0027,)"}, {"arrows": "to", "depth": "{3}", "from": "(\u0027b\u0027, \u0027c\u0027)", "title": "Parent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027b\u0027, \u0027c\u0027). Depths: {3}", "to": "(\u0027b\u0027, \u0027c\u0027)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027b\u0027, \u0027c\u0027)", "title": "Parent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027a\u0027, \u0027x\u0027). Depths: {1}", "to": "(\u0027a\u0027, \u0027x\u0027)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027b\u0027, \u0027c\u0027)", "title": "Parent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027ni\u0027,). Depths: {2}", "to": "(\u0027ni\u0027,)"}, {"arrows": "to", "depth": "{1, 4}", "from": "(\u0027b\u0027, \u0027c\u0027)", "title": "Parent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027c\u0027,). Depths: {1, 4}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027a\u0027, \u0027x\u0027)", "title": "Parent: (\u0027a\u0027, \u0027x\u0027) Child: (\u0027b\u0027, \u0027c\u0027). Depths: {2}\u003cbr\u003eParent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027a\u0027, \u0027x\u0027). Depths: {1}", "to": "(\u0027b\u0027, \u0027c\u0027)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027a\u0027, \u0027x\u0027)", "title": "Parent: (\u0027a\u0027, \u0027x\u0027) Child: (\u0027ni\u0027,). Depths: {1}", "to": "(\u0027ni\u0027,)"}, {"arrows": "to", "depth": "{3}", "from": "(\u0027a\u0027, \u0027x\u0027)", "title": "Parent: (\u0027a\u0027, \u0027x\u0027) Child: (\u0027c\u0027,). Depths: {3}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027ni\u0027,)", "title": "Parent: (\u0027ni\u0027,) Child: (\u0027b\u0027, \u0027c\u0027). Depths: {1}\u003cbr\u003eParent: (\u0027b\u0027, \u0027c\u0027) Child: (\u0027ni\u0027,). Depths: {2}", "to": "(\u0027b\u0027, \u0027c\u0027)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027ni\u0027,)", "title": "Parent: (\u0027ni\u0027,) Child: (\u0027c\u0027,). Depths: {2}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{2}", "from": "(\u0027y\u0027, \u0027z\u0027)", "title": "Parent: (\u0027y\u0027, \u0027z\u0027) Child: (\u0027c\u0027,). Depths: {2}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027y\u0027, \u0027z\u0027)", "title": "Parent: (\u0027y\u0027, \u0027z\u0027) Child: (\u0027i\u0027,). Depths: {1}", "to": "(\u0027i\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027y\u0027, \u0027z\u0027)", "title": "Parent: (\u0027y\u0027, \u0027z\u0027) Child: (\u0027q\u0027,). Depths: {1}", "to": "(\u0027q\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027i\u0027,)", "title": "Parent: (\u0027i\u0027,) Child: (\u0027c\u0027,). Depths: {1}", "to": "(\u0027c\u0027,)"}, {"arrows": "to", "depth": "{1}", "from": "(\u0027q\u0027,)", "title": "Parent: (\u0027q\u0027,) Child: (\u0027c\u0027,). Depths: {1}", "to": "(\u0027c\u0027,)"}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {"nodes": {"physics": false, "size": 12}, "edges": {"arrowStrikethrough": false, "color": {"inherit": true}, "physics": false, "smooth": false}, "physics": {"minVelocity": 0.75}};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
