@@ -78,11 +78,11 @@ class TestScenario5(unittest.TestCase):
 class TestGraphPlot(unittest.TestCase):
     def test_plot_big_graph(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_5/big_training_data.html')
-        rule_composer_class.plot_directed_graph(filename='big_graph.html')
+        rule_composer_class.plot_directed_graph(filename='graph_files/big_graph.html')
 
     def test_plot_small_graph(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_5/train.html')
-        rule_composer_class.plot_directed_graph(filename='small_graph.html')
+        rule_composer_class.plot_directed_graph(filename='graph_files/small_graph.html')
 
 class TestFineGraphPlot(unittest.TestCase):
 
@@ -93,7 +93,7 @@ class TestFineGraphPlot(unittest.TestCase):
 
     def test_plot_small_fine_graph_v2(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_4/train.html')
-        rule_composer_class.plot_fine_directed_graph_v2(filename='small_fine_graph_v2.html')
+        rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/small_fine_graph_v2.html')
 
 class TestScenario6(unittest.TestCase):
     def test_allow_fine_relations(self):

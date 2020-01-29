@@ -16,7 +16,7 @@ def plot_graph(G):
     # plt.tight_layout()
     # plt.show()
 
-def draw_graph3(networkx_graph,notebook=False,output_filename='graph.html',show_buttons=True,only_physics_buttons=False):
+def draw_graph3(networkx_graph,notebook=False,output_filename='graph_files/graph.html',show_buttons=True,only_physics_buttons=False):
     """
     This function accepts a networkx graph object,
     converts it to a pyvis network object preserving its node and edge attributes,
@@ -107,7 +107,7 @@ def draw_graph3(networkx_graph,notebook=False,output_filename='graph.html',show_
     return pyvis_graph.show(output_filename)
 
 
-def draw_fine_graph3(networkx_graph, notebook=False, output_filename='graph.html', show_buttons=True,
+def draw_fine_graph3(networkx_graph, notebook=False, output_filename='graph_files/graph.html', show_buttons=True,
                 only_physics_buttons=False):
     """
     This function accepts a networkx graph object,
@@ -197,7 +197,7 @@ def draw_fine_graph3(networkx_graph, notebook=False, output_filename='graph.html
     # return and also save
     return pyvis_graph.show(output_filename)
 
-def draw_fine_graph3_v2(networkx_graph, notebook=False, output_filename='graph.html', show_buttons=True,
+def draw_fine_graph3_v2(networkx_graph, notebook=False, output_filename='graph_files/graph.html', show_buttons=True,
                 only_physics_buttons=False):
     """
     This function accepts a networkx graph object,
