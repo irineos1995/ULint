@@ -18,12 +18,12 @@ class RuleComposer(TAG):
                     self.get_parents_recursively(child)
                     break
 
-    def compare_test_page(self, test_page):
+    def compare_test_page(self, test_page, allow_fine_relations):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
             
             for child in test_soup.childGenerator():
-                self.get_parents_recursively_for_test(child)
+                self.get_parents_recursively_for_test(child, allow_fine_relations)
                 break
 
 
@@ -245,7 +245,7 @@ class RuleComposer(TAG):
 
 
 
-    def get_parents_recursively_for_test(self, tree):
+    def get_parents_recursively_for_test(self, tree, allow_fine_relations=False):
         if not tree:
             return
         else:
@@ -257,12 +257,12 @@ class RuleComposer(TAG):
                             parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
                             if not parents:
                                 parents = [()]
-                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline)
+                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations)
                             if not passed:
                                 print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                     else:
                         continue
-                    self.get_parents_recursively_for_test(child)
+                    self.get_parents_recursively_for_test(child, allow_fine_relations)
             else:
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass

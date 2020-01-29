@@ -210,11 +210,38 @@ class TAG():
                     return True
         return False
 
+    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line):
+        fine_relations = self.construct_fine_relations()
+        for ccls in child_tuple:
+            for depth, parent in enumerate(parents_list):
+                depth += 1
+                for cls in parent:
+                    if not fine_relations.get(cls, {}).get(ccls, {}):
+                        error = 'Line--->: {}  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
+                        return False, error
+                    else:
+                        if depth not in fine_relations.get(cls, {}).get(ccls, {}):
+                            error = 'Line--->: {}  Parent: {} has no relation to child: {} at depth: {}'.format(
+                                source_line, cls, ccls, depth)
+                        else:
+                            print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
+                                                                                                      ccls, depth))
+        return True, ''
 
-    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line):
+
+
+    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations=False):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
+
+        if allow_fine_relations:
+            fine_relations_exists, error = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line)
+            if not fine_relations_exists:
+                self.line_number_with_errors.add(source_line)
+                return False, error
+            else:
+                return True, ''
 
         # Base Case (if child exists)
         for child in stored_children:
@@ -261,4 +288,53 @@ class TAG():
 
     def get_line_number_errors(self):
         return self.line_number_with_errors
+
+    def construct_fine_relations(self):
+        '''
+            This is showing how many times we have seen a child in the big HTML tree ("occurences").
+            Also shows how many times we have seen the parent of that child in those "occurences",
+            as a dictionary ("parents") with key: "parent_name", value: "probability_of_presence_above_child"
+
+            child_parents_dict = {
+                ('a', 'x', 'y'): {
+                    "parents": {
+                        ('q', 'w'): 0.5,
+                        ('b', 'z'): 0.7
+                    },
+                    "occurences": 2,
+                    "encountered_parent_orders": [
+                        [('a' 'b'), ('d', 'e')]
+                    ]
+                },
+            }
+        '''
+        fine_relations = {}
+        encountered_parent_orders = self.get_encountered_parent_orders_and_depths()
+        for parent in encountered_parent_orders:
+            if not parent:
+                cls = str(parent)
+                for child in encountered_parent_orders[parent]:
+                    child_depth = encountered_parent_orders[parent][child]
+                    for ccls in child:
+                        if fine_relations.get(cls, ()):
+                            if fine_relations[cls].get(ccls, ()):
+                                fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
+                            else:
+                                fine_relations[cls][ccls] = child_depth
+                        else:
+                            fine_relations[cls] = {ccls: child_depth}
+            else:
+                for cls in parent:
+                    for child in encountered_parent_orders[parent]:
+                        child_depth = encountered_parent_orders[parent][child]
+                        for ccls in child:
+                            if fine_relations.get(cls, ()):
+                                if fine_relations[cls].get(ccls, ()):
+                                    fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
+                                else:
+                                    fine_relations[cls][ccls] = child_depth
+                            else:
+                                fine_relations[cls] = {ccls: child_depth}
+        print('fine_relations ', fine_relations)
+        return fine_relations
 
