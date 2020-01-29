@@ -3,20 +3,35 @@ from bs4 import NavigableString, Tag, Doctype
 import networkx as nx
 from graph_base_case import plot_graph, draw_graph3, draw_fine_graph3, draw_fine_graph3_v2
 from tidy import TAG
+import os
+import glob
 
 class RuleComposer(TAG):
     TAG_OBJECT = None
 
-    def __init__(self, threshold, train_page):
+    def __init__(self, threshold, train_set):
         TAG.__init__(self, threshold)
-        
-        with open(train_page, 'r') as tr_p:
-            train_soup = BeautifulSoup(tr_p, 'html.parser')
 
-            for child in train_soup.childGenerator():
-                if isinstance(child, Tag):
-                    self.get_parents_recursively(child)
-                    break
+        if os.path.isdir(train_set):
+            print('Is a directory')
+            for file in glob.glob(os.path.join(train_set, "*.htm*")):
+                print('Processing file: {}'.format(file))
+                with open(file, 'r') as tr_p:
+                    train_soup = BeautifulSoup(tr_p, 'html.parser')
+                    for child in train_soup.childGenerator():
+                        if isinstance(child, Tag):
+                            self.get_parents_recursively(child)
+                            break
+
+        elif os.path.isfile(train_set):
+            print('Is a file')
+            with open(train_set, 'r') as tr_p:
+                print('Processing file: {}'.format(train_set))
+                train_soup = BeautifulSoup(tr_p, 'html.parser')
+                for child in train_soup.childGenerator():
+                    if isinstance(child, Tag):
+                        self.get_parents_recursively(child)
+                        break
 
     def compare_test_page(self, test_page, allow_fine_relations):
         with open(test_page, 'r') as test_p:
