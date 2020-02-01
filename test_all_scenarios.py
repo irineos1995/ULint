@@ -98,14 +98,14 @@ class TestFineGraphPlot(unittest.TestCase):
 class TestScenario6(unittest.TestCase):
     def test_allow_fine_relations(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_6/train.html')
-        rule_composer_class.compare_test_page(test_page='scenario_6/test.html', allow_fine_relations=True)
+        rule_composer_class.compare_test_page(test_page='scenario_6/test.html', allow_fine_grain_relations=True)
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
 
     def test_disable_fine_relations(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_6/train.html')
-        rule_composer_class.compare_test_page(test_page='scenario_6/test.html', allow_fine_relations=False)
+        rule_composer_class.compare_test_page(test_page='scenario_6/test.html', allow_fine_grain_relations=False)
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [4])
@@ -113,14 +113,14 @@ class TestScenario6(unittest.TestCase):
 class TestScenario7(unittest.TestCase):
     def test_allow_fine_relations(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_7/train.html')
-        rule_composer_class.compare_test_page(test_page='scenario_7/test.html', allow_fine_relations=True)
+        rule_composer_class.compare_test_page(test_page='scenario_7/test.html', allow_fine_grain_relations=True)
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
 
     def test_disable_fine_relations(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_7/train.html')
-        rule_composer_class.compare_test_page(test_page='scenario_7/test.html', allow_fine_relations=False)
+        rule_composer_class.compare_test_page(test_page='scenario_7/test.html', allow_fine_grain_relations=False)
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [4])
@@ -128,8 +128,23 @@ class TestScenario7(unittest.TestCase):
 class TestScenario8(unittest.TestCase):
     def test_training_a_directory(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_8')
-        rule_composer_class.compare_test_page(test_page='scenario_8/test.html', allow_fine_relations=True)
+        rule_composer_class.compare_test_page(test_page='scenario_8/test.html', allow_fine_grain_relations=True)
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
+
+class TestScenario9(unittest.TestCase):
+    def test_start_threshold_small(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_9/train.html', star_depth_threshold=3)
+        rule_composer_class.compare_test_page(test_page='scenario_9/test.html', allow_fine_grain_relations=True)
+
+        errors = rule_composer_class.get_line_number_errors()
+        self.assertEqual(list(errors), [])
+
+    def test_start_threshold_large(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_9/train.html', star_depth_threshold=1000)
+        rule_composer_class.compare_test_page(test_page='scenario_9/test.html', allow_fine_grain_relations=True)
+
+        errors = rule_composer_class.get_line_number_errors()
+        self.assertEqual(list(errors), [7])
 

@@ -2,11 +2,13 @@ class TAG():
     child_parents_dict = {}
     THRESHOLD = 1
     line_number_with_errors = set()
+    star_depth_threshold = None
 
-    def __init__(self, threshold):
+    def __init__(self, threshold, star_depth_threshold):
         self.child_parents_dict = {}
         self.THRESHOLD = threshold
         self.line_number_with_errors = set()
+        self.star_depth_threshold = star_depth_threshold
 
     def equal_list_of_tuples(self, list1, list2):
         if len(list1) != len(list2):
@@ -57,6 +59,17 @@ class TAG():
                             parent_child_depth_relation[parent][child].add(depth+1)
                         else:
                             parent_child_depth_relation[parent][child] = {depth+1}
+
+        if self.star_depth_threshold:
+            for cls in parent_child_depth_relation:
+                for ccls in parent_child_depth_relation[cls]:
+                    flag = True
+                    for i in range(1, self.star_depth_threshold + 1):
+                        if i not in parent_child_depth_relation[cls][ccls]:
+                            flag = False
+                            break
+                    if flag:
+                        parent_child_depth_relation[cls][ccls] = '*'
         return parent_child_depth_relation
 
 
@@ -218,13 +231,21 @@ class TAG():
                 for cls in parent:
                     if not fine_relations.get(cls, {}).get(ccls, {}):
                         error = 'Line--->: {}  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
+                        print(error)
                         return False, error
                     else:
-                        if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                            error = 'Line--->: {}  Parent: {} has no relation to child: {} at depth: {}'.format(
-                                source_line, cls, ccls, depth)
+                        if fine_relations.get(cls, {}).get(ccls, {}) == "*":
+                            print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {} because depth = "*"'.format(
+                                    source_line, cls,
+                                    ccls, depth))
                         else:
-                            print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
+                            if depth not in fine_relations.get(cls, {}).get(ccls, {}):
+                                error = 'Line--->: {}  Parent: {} has no relation to child: {} at depth: {}'.format(
+                                    source_line, cls, ccls, depth)
+                                print(error)
+                                return False, error
+                            else:
+                                print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
                                                                                                       ccls, depth))
         return True, ''
 
@@ -335,6 +356,19 @@ class TAG():
                                     fine_relations[cls][ccls] = child_depth
                             else:
                                 fine_relations[cls] = {ccls: child_depth}
+
+        if self.star_depth_threshold:
+            for cls in fine_relations:
+                for ccls in fine_relations[cls]:
+                    flag = True
+                    for i in range(1, self.star_depth_threshold + 1):
+                        if i not in fine_relations[cls][ccls]:
+                            flag = False
+                            break
+                    if flag:
+                        fine_relations[cls][ccls] = '*'
+
+
         print('fine_relations ', fine_relations)
         return fine_relations
 

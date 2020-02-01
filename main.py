@@ -9,8 +9,8 @@ import glob
 class RuleComposer(TAG):
     TAG_OBJECT = None
 
-    def __init__(self, threshold, train_set):
-        TAG.__init__(self, threshold)
+    def __init__(self, threshold, train_set, star_depth_threshold=None):
+        TAG.__init__(self, threshold, star_depth_threshold)
 
         if os.path.isdir(train_set):
             print('Is a directory')
@@ -33,12 +33,12 @@ class RuleComposer(TAG):
                         self.get_parents_recursively(child)
                         break
 
-    def compare_test_page(self, test_page, allow_fine_relations):
+    def compare_test_page(self, test_page, allow_fine_grain_relations=False):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
             
             for child in test_soup.childGenerator():
-                self.get_parents_recursively_for_test(child, allow_fine_relations)
+                self.get_parents_recursively_for_test(child, allow_fine_grain_relations)
                 break
 
 
