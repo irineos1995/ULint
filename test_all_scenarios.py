@@ -137,6 +137,7 @@ class TestScenario9(unittest.TestCase):
     def test_start_threshold_small(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenario_9/train.html', star_depth_threshold=3)
         rule_composer_class.compare_test_page(test_page='scenario_9/test.html', allow_fine_grain_relations=True)
+        rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/small_fine_graph_v2_with_star.html')
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
