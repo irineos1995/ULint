@@ -2,19 +2,26 @@ from bs4 import BeautifulSoup
 from bs4 import NavigableString, Tag, Doctype
 import networkx as nx
 from graph_base_case import plot_graph, draw_graph3, draw_fine_graph3, draw_fine_graph3_v2
-from tidy import TAG
+from TAG import Relations
 import os
 import glob
+import tracemalloc
+from datetime import datetime
 
-class RuleComposer(TAG):
+class RuleComposer(Relations):
     TAG_OBJECT = None
 
-    def __init__(self, threshold, train_set, star_depth_threshold=None):
-        TAG.__init__(self, threshold, star_depth_threshold)
+    def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None):
+        start_time = datetime.now()
+        tracemalloc.start()
+        Relations.__init__(self, threshold, star_depth_threshold)
 
         if os.path.isdir(train_set):
             print('Is a directory')
-            for file in glob.glob(os.path.join(train_set, "*.htm*")):
+            files_list = glob.glob(os.path.join(train_set, "*.htm*"))
+            if max_training_pages and len(files_list) >= max_training_pages > 0:
+                files_list = files_list[:max_training_pages]
+            for file in files_list:
                 print('Processing file: {}'.format(file))
                 with open(file, 'r') as tr_p:
                     train_soup = BeautifulSoup(tr_p, 'html.parser')
@@ -32,14 +39,25 @@ class RuleComposer(TAG):
                     if isinstance(child, Tag):
                         self.get_parents_recursively(child)
                         break
+        end_time = datetime.now()
+        total_seconds = (end_time - start_time).total_seconds()
+        current, peak = tracemalloc.get_traced_memory()
+        print('Total time for training {} pages: {} seconds'.format(max_training_pages, total_seconds))
+        print('Total number of coarse rules learned: {}'.format(self.get_number_of_coarse_rules_composed()))
+        print('Total number of coarse nodes: {}'.format(self.get_number_of_coarse_nodes_composed()))
+        print('Total number of fine rules learned: {}'.format(self.get_number_of_fine_rules_composed()))
+        print('Total number of fine nodes: {}'.format(self.get_number_of_fine_nodes_composed()))
+        print("Peak memory usage was {} MB".format((peak / 10 ** 6)))
+        tracemalloc.stop()
 
     def compare_test_page(self, test_page, allow_fine_grain_relations=False):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
-            
+
             for child in test_soup.childGenerator():
-                self.get_parents_recursively_for_test(child, allow_fine_grain_relations)
-                break
+                if isinstance(child, Tag):
+                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations)
+                    break
 
 
     def create_graph(self):
@@ -122,7 +140,7 @@ class RuleComposer(TAG):
             }
         '''
         parent_orders_and_depths = self.get_encountered_parent_orders_and_depths()
-        print(parent_orders_and_depths)
+        # print(parent_orders_and_depths)
         G = nx.DiGraph()
         for node in parent_orders_and_depths:
             # Now need to loop through individual classes in that node
@@ -148,7 +166,7 @@ class RuleComposer(TAG):
                     if not G.has_node(cls):
                         G.add_node(cls)
                     for child in parent_orders_and_depths[node]:
-                        print('node: {} ---> child: {}'.format(node, child))
+                        # print('node: {} ---> child: {}'.format(node, child))
                         # Now need to loop through individual classes in child
                         for ccls in child:
                             ccls = str(ccls)
@@ -274,7 +292,8 @@ class RuleComposer(TAG):
                                 parents = [()]
                             passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations)
                             if not passed:
-                                print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
+                                # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
+                                print(errors)
                     else:
                         continue
                     self.get_parents_recursively_for_test(child, allow_fine_relations)

@@ -1,4 +1,4 @@
-class TAG():
+class Relations():
     child_parents_dict = {}
     THRESHOLD = 1
     line_number_with_errors = set()
@@ -145,6 +145,57 @@ class TAG():
             }
         return
 
+    def get_number_of_coarse_rules_composed(self):
+        '''
+            parent_child_depth_relation[parent] = {
+                            child : {depth+1}
+                        }
+        '''
+        rule_counter = 0
+        parent_child_depth_relation = self.get_encountered_parent_orders_and_depths()
+        for parent in parent_child_depth_relation:
+            for child in parent_child_depth_relation[parent]:
+                rule_counter += 1
+        return rule_counter
+
+    def get_number_of_coarse_nodes_composed(self):
+        '''
+            parent_child_depth_relation[parent] = {
+                            child : {depth+1}
+                        }
+        '''
+        nodes = set()
+        parent_child_depth_relation = self.get_encountered_parent_orders_and_depths()
+        for parent in parent_child_depth_relation:
+            nodes.add(parent)
+        return len(nodes)
+
+    def get_number_of_fine_rules_composed(self):
+        '''
+            parent_child_depth_relation[parent] = {
+                            child : {depth+1}
+                        }
+        '''
+        rule_counter = 0
+        fine_relations = self.construct_fine_relations()
+        for parent in fine_relations:
+            for child in fine_relations[parent]:
+                rule_counter += 1
+        return rule_counter
+
+    def get_number_of_fine_nodes_composed(self):
+        '''
+            parent_child_depth_relation[parent] = {
+                            child : {depth+1}
+                        }
+        '''
+        nodes = set()
+        fine_relations = self.construct_fine_relations()
+        for parent in fine_relations:
+            nodes.add(parent)
+        return len(nodes)
+
+
     def remove_elements_below_threshold(self, child_tuple, list_of_tuples):
         '''
             list_of_list_of_tuples = [
@@ -224,29 +275,35 @@ class TAG():
         return False
 
     def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line):
+        combined_errors = []
         fine_relations = self.construct_fine_relations()
         for ccls in child_tuple:
             for depth, parent in enumerate(parents_list):
                 depth += 1
                 for cls in parent:
                     if not fine_relations.get(cls, {}).get(ccls, {}):
-                        error = 'Line--->: {}  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
-                        print(error)
-                        return False, error
+                        error = 'Error in line: {};  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
+                        # print(error)
+                        # return False, error
+                        combined_errors.append(error)
                     else:
                         if fine_relations.get(cls, {}).get(ccls, {}) == "*":
-                            print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {} because depth = "*"'.format(
-                                    source_line, cls,
-                                    ccls, depth))
+                            # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {} because depth = "*"'.format(
+                            #         source_line, cls,
+                            #         ccls, depth))
+                            pass
                         else:
                             if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                                error = 'Line--->: {}  Parent: {} has no relation to child: {} at depth: {}'.format(
+                                error = 'Error in line: {};  Parent: {} has no relation to child: {} at depth: {}'.format(
                                     source_line, cls, ccls, depth)
-                                print(error)
-                                return False, error
+                                # print(error)
+                                combined_errors.append(error)
                             else:
-                                print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
-                                                                                                      ccls, depth))
+                                # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
+                                #                                                                       ccls, depth))
+                                pass
+        if combined_errors:
+            return False, combined_errors
         return True, ''
 
 
@@ -257,10 +314,10 @@ class TAG():
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, error = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line)
+            fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
-                return False, error
+                return False, '\n'.join(errors)
             else:
                 return True, ''
 
@@ -369,6 +426,6 @@ class TAG():
                         fine_relations[cls][ccls] = '*'
 
 
-        print('fine_relations ', fine_relations)
+        # print('fine_relations ', fine_relations)
         return fine_relations
 
