@@ -149,3 +149,78 @@ class TestScenario9(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [7])
 
+class TestScenario10(unittest.TestCase):
+    def test_training_algorithm_with_10_pages(self):
+        max_training_pages = 10
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_20_pages(self):
+        max_training_pages = 20
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_30_pages(self):
+        max_training_pages = 30
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_40_pages(self):
+        max_training_pages = 40
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_50_pages(self):
+        max_training_pages = 50
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_60_pages(self):
+        max_training_pages = 60
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_70_pages(self):
+        max_training_pages = 70
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+        self.assertEqual([], [])
+
+    def test_training_algorithm_with_over_the_limit_pages(self):
+        max_training_pages = 1000
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_10/train_set/', max_training_pages=max_training_pages)
+
+        rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/huge_fine_graph_v2.html')
+        self.assertEqual([], [])
+
+class TestScenario11(unittest.TestCase):
+    def test_vanilla_bootstrap(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages/')
+        rule_composer_class.compare_test_page(test_page='scenario_11/test.htm', allow_fine_grain_relations=True)
+        # rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/fine_graph_v2_with_vanilla_bootstrap.html')
+
+        errors = rule_composer_class.get_line_number_errors()
+        self.assertEqual(list(errors), [])
+
+    def test_memory_footprint_1_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=1)
+        self.assertEqual([], [])
+
+    def test_memory_footprint_3_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=3)
+        self.assertEqual([], [])
+
+    def test_memory_footprint_5_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=5)
+        self.assertEqual([], [])
+
+    def test_memory_footprint_10_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=10)
+        self.assertEqual([], [])
+
+    def test_memory_footprint_20_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=20)
+        self.assertEqual([], [])
+
+    def test_memory_footprint_30_pages(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenario_11/vanilla_bootstrap_train_pages', max_training_pages=30)
+        self.assertEqual([], [])

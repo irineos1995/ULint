@@ -47,6 +47,7 @@ class RuleComposer(Relations):
         print('Total number of coarse nodes: {}'.format(self.get_number_of_coarse_nodes_composed()))
         print('Total number of fine rules learned: {}'.format(self.get_number_of_fine_rules_composed()))
         print('Total number of fine nodes: {}'.format(self.get_number_of_fine_nodes_composed()))
+        print('Total number of distinct bootstrap classes identified: {}'.format(len(self.get_distinct_fine_grain_classes())))
         print("Peak memory usage was {} MB".format((peak / 10 ** 6)))
         tracemalloc.stop()
 
