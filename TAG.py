@@ -64,13 +64,15 @@ class Relations():
         if self.star_depth_threshold:
             for cls in parent_child_depth_relation:
                 for ccls in parent_child_depth_relation[cls]:
-                    flag = True
-                    for i in range(1, self.star_depth_threshold + 1):
-                        if i not in parent_child_depth_relation[cls][ccls]:
-                            flag = False
-                            break
-                    if flag:
+                    if len(parent_child_depth_relation[cls][ccls]) >= self.star_depth_threshold:
                         parent_child_depth_relation[cls][ccls] = '*'
+                    # flag = True
+                    # for i in range(1, self.star_depth_threshold + 1):
+                    #     if i not in parent_child_depth_relation[cls][ccls]:
+                    #         flag = False
+                    #         break
+                    # if flag:
+                    #     parent_child_depth_relation[cls][ccls] = '*'
         return parent_child_depth_relation
 
 
@@ -275,14 +277,20 @@ class Relations():
                     return True
         return False
 
-    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line):
+    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes):
         combined_errors = []
         fine_relations = self.construct_fine_relations()
         for ccls in child_tuple:
+            # if not self.seen_class(ccls) and ignore_unseen_classes:
+            #     continue
             for depth, parent in enumerate(parents_list):
                 depth += 1
                 for cls in parent:
+                    # if not self.seen_class(cls) and ignore_unseen_classes:
+                    #     continue
                     if not fine_relations.get(cls, {}).get(ccls, {}):
+                        if ignore_unseen_classes:
+                            continue
                         error = 'Error in line: {};  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
                         # print(error)
                         # return False, error
@@ -295,8 +303,8 @@ class Relations():
                             pass
                         else:
                             if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                                error = 'Error in line: {};  Parent: {} has no relation to child: {} at depth: {}'.format(
-                                    source_line, cls, ccls, depth)
+                                error = 'Error in line: {};  Parent: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
+                                    source_line, cls, ccls, depth, fine_relations.get(cls, {}).get(ccls, {}))
                                 # print(error)
                                 combined_errors.append(error)
                             else:
@@ -307,15 +315,21 @@ class Relations():
             return False, combined_errors
         return True, ''
 
+    def seen_class(self, cls):
+        regex_classes_found = self.get_distinct_fine_grain_classes()
+        for regex in regex_classes_found:
+            if re.match(regex, cls):
+                return True
+        return False
 
 
-    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations=False):
+    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line)
+            fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
                 return False, '\n'.join(errors)
@@ -409,7 +423,10 @@ class Relations():
                         for ccls in child:
                             if fine_relations.get(cls, ()):
                                 if fine_relations[cls].get(ccls, ()):
-                                    fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
+                                    if fine_relations[cls][ccls] == '*':
+                                        continue
+                                    else:
+                                        fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
                                 else:
                                     fine_relations[cls][ccls] = child_depth
                             else:
@@ -420,9 +437,12 @@ class Relations():
                 for ccls in fine_relations[cls]:
                     flag = True
                     for i in range(1, self.star_depth_threshold + 1):
-                        if i not in fine_relations[cls][ccls]:
-                            flag = False
-                            break
+                        if fine_relations[cls][ccls] == "*":
+                            continue
+                        else:
+                            if i not in fine_relations[cls][ccls]:
+                                flag = False
+                                break
                     if flag:
                         fine_relations[cls][ccls] = '*'
 
@@ -437,7 +457,7 @@ class Relations():
                         }
         '''
 
-        bootstrap_4_rules = {'input-group', 'dropright', 'rounded', 'border-light', 'dropdown-item-text', 'navbar-toggler', 'carousel-fade', 'nav-pills with dropdown', 'mw-100', 'card-body', 'form-group', 'custom-radio', 'card-subtitle', 'col-lg-[0-9]+', 'btn-group', 'text-nowrap', 'pb-.*-[0-9]+', 'list-group-item-success', 'p-1', 'bg-info', 'dropup', 'form using the grid', 'table-info', 'custom-range', 'navbar-expand-.*', 'radio', 'text-monospace', 'd-.*-none', 'rounded-.*', 'active button', 'card-img-overlay', 'tooltip', 'fixed-bottom', 'form-control-file', 'badge-primary', 'nav-fill', 'card-img-bottom', 'border-dark', 'nav flex-column', 'mx-1', 'align-self-.*-start', 'm-.*-n[0-9]+', 'custom-switch', 'rounded-0', 'spinner-grow-sm', 'list-group-item active', 'pt-.*-[0-9]+', 'form-control-plaintext', 'text-lowercase', 'table-bordered', 'border-success', 'mh-100', 'text-decoration-none', 'list-group with d-flex', 'dropleft', 'pr-.*-[0-9]+', 'badge-secondary', 'page-item active', 'spinner-border text-.*', 'nav-tabs', 'dropdown-menu-right', 'table', 'alert-dismissible', 'card-columns', 'thead-dark', 'no-gutters', 'order-.*-[0-9]+', 'align-items-.*-stretch', 'bg-dark', 'text-muted', 'checkbox', 'border-.*-0', 'list-group-item-warning', 'modal-dialog-centered', 'card-header', 'font-weight-lighter', 'text-white-50', 'navbar-brand', 'list-group-item-secondary', 'custom-checkbox', 'nav.nav', 'card-text', 'd-flex align-self-center', 'flex-.*-column-reverse', 'card-title', 'text-dark', 'float-.*-none', 'middle image', 'pagination', 'font-italic', 'col-[0-9]+', 'alert-danger', 'progress-bar bg-.*', 'container-fluid', 'progress-bar with label', 'alert-light', 'badge-warning', 'readonly', 'progress-bar-striped bg-.*', 'list-group-item-light', 'shadow-none', 'btn-dark', 'table-hover', 'alert-warning', 'm-1', 'btn-info', 'col-sm-[0-9]+', 'text-justify', 'nested media', 'btn-toolbar', 'dropdown-header', 'card bg-... text-...', 'justify-content-.*-around', 'card', 'text-white', 'dismissible popover', 'my-1', 'modal-dialog-scrollable', 'h.*.card-header', 'thead-light', 'float-.*-left', 'text-.*-right', 'ml-1', 'pagination-lg', 'blockquote-footer', 'align-self-.*-baseline', 'row', 'img-fluid', 'mb-1', 'align-self-.*-stretch', 'list-group-item disabled', 'list-group-item-dark', 'flex-.*-wrap-reverse', 'alert-success', 'progress-bar-animated', 'btn-secondary', 'text-success', 'table-sm', 'btn-warning', 'text-black-50', 'align-items-.*-start', 'text-.*-center', 'font-weight-bolder', 'spinner-border-sm', 'dl-horizontal', 'flex-fill', 'list-group', 'stretched-link', 'my-.*-[0-9]+', 'btn-link', 'blockquote-reverse', 'collapse navbar-collapse', 'align-content-.*-stretch', 'border-danger', 'accordion', 'nested columns', 'form-control', 'progress-bar', 'pb-1', 'bg-secondary', 'alert-secondary', 'navbar', 'badge-pill', 'navbar with form', 'invisible', 'btn-block', 'border-primary', 'form-inline', 'radio as button', 'right aligned media', 'mr-.*-[0-9]+', 'align-self-.*-center', 'popovers', 'btn-outline-success', 'align-self-.*-end', 'flex-.*-grow-0', 'close', 'card-deck', 'flex-.*-row-reverse', 'border-info', 'text-info', 'd-.*-inline-flex', 'bg-primary', 'btn-outline-danger', 'card-footer', 'font-weight-normal', 'col-xl-[0-9]+', 'input-group-sm', 'btn-group-sm', 'text-secondary', 'border-white', 'list-group-item-danger', 'table-dark', 'd-.*-flex', 'dropdown-item disabled', 'pagination-sm', 'text-break', 'progress', 'order-[0-9]+', 'shadow-sm', 'btn-outline-warning', 'text-truncate', 'flex-.*-shrink-1', 'blockquote', 'checkbox as button', 'navbar-dark bg-dark', 'mr-1', 'disabled items', 'progress-bar with height', 'font-weight-light', 'flex-.*-row', 'bg-success', 'text-.*-left', 'spinner-grow', 'table-borderless', 'img-thumbnail', 'font-weight-bold', 'display-[0-9]+', 'mx-.*-[0-9]+', 'form-check-inline', 'list-group-item-action', 'col-.*', 'table-.*-responsive', 'text-hide', 'list-group with badges', 'px-.*-[0-9]+', 'btn-outline-info', 'd-.*-block', 'navbar-text', 'p-.*-[0-9]+', 'text-capitalize', 'btn-lg', 'justify-content-.*-end', 'custom-select', 'mt-.*-[0-9]+', 'form-control-sm', 'custom-file', 'flex-.*-wrap', 'align-items-.*-baseline', 'shadow', 'pr-1', 'alert-dark', 'ul.nav', 'bg-warning', 'alert-info', 'btn-success', 'badge-success', 'sticky-top', 'm-n1', 'table-light', 'collapse', 'multiple progress-bar', 'text-uppercase', 'col', 'form-control-lg', 'visible', 'table-danger', 'list-group-item-info', 'pl-1', 'card-img-top', 'badge-dark', 'btn-danger', 'align-content-.*-end', 'pt-1', 'ml-.*-[0-9]+', 'nav-justified', 'fixed-top', 'align-content-.*-center', 'btn-group-lg', 'list-inline', 'lead', 'float-.*-right', 'bg-danger', 'py-.*-[0-9]+', 'border-secondary', 'sr-only-focusable', 'badge-light', 'd-.*-inline', 'dropdown', 'btn-outline-light', 'modal-xl', 'form-check', 'modal-sm', 'd-flex align-self-end', 'py-1', 'rounded-lg', 'spinner-grow text-.*', 'table-reflow', 'align-content-.*-start', 'form-control-range', 'border-warning', 'align-content-.*-around', 'h-100', 'nav-tabs with dropdown', 'sr-only', 'bg-light', 'd-flex align-self-start', 'badge-danger', 'btn-outline-primary', 'modal', 'mt-1', 'nav justify-content-.*', 'jumbotron', 'justify-content-.*-start', 'navbar fixed-top', 'table-primary', 'table-secondary', 'align-items-.*-center', 'segmented buttons', 'd-.*-inline-block', 'badge-info', 'nav-pills', 'breadcrumb', 'table-striped', 'carousel-caption', 'btn-group-vertical', 'data-spy', 'navbar-light', 'text-light', 'jumbotron-fluid', 'alert-link', 'carousel-indicators', 'table-success', 'rounded-circle', 'clearfix', 'progress-bar-striped', 'badge', 'card-group', 'text-danger', 'embed-responsive', 'flex-.*-column', 'navbar fixed-bottom', 'card-link', 'btn-light', 'table-warning', 'btn-primary', 'alert-primary', 'btn-sm', 'table-active', 'spinner-border', 'list-unstyled', 'text-primary', 'd-.*-table', 'col-md-[0-9]+', 'list-group-item-primary', 'pl-.*-[0-9]+', 'align-items-.*-end', 'nav with flex utils', 'w-100', 'd-.*-table-cell', 'input-group-append', 'offset-.*-[0-9]+', 'flex-.*-shrink-0', 'text-body', 'media', 'carousel slide', 'disabled button', 'shadow-lg', 'btn-outline-secondary', 'modal fade', 'input-group-prepend', 'bg-white', 'page-item disabled', 'list-group-horizontal', 'container', 'd-print-...', 'flex-.*-grow-1', 'input-group-lg', 'justify-content-.*-center', 'mb-.*-[0-9]+', 'align-.*', 'alert-heading', 'rounded-sm', 'btn-outline-dark', 'border', 'm-.*-[0-9]+', 'flex-.*-nowrap', 'modal-lg', 'toast', 'px-1', 'dropdown-divider', 'justify-content-.*-between', 'text-warning', 'navbar sticky-top'}
+        bootstrap_4_rules = ['row', 'align-self-end', 'navbar-brand', 'toast', 'navbar-dark', 'btn-outline-dark', 'badge-warning', 'spinner-border', 'form-control-file', 'py-1', 'form-control-sm', 'text-.*-center', 'custom-checkbox', 'align-content-.*-start', 'image', 'list-group-item-action', 'alert-light', 'table-secondary', 'd-.*-none', 'col-lg-[0-9]+', 'middle', 'card-img-bottom', 'align-self-.*-start', 'popovers', 'border-info', 'font-weight-lighter', 'page-item', 'card-group', 'container', 'bg-info', 'list-group-item-warning', 'd-.*-table', 'bg-warning', 'nav.nav', 'clearfix', 'visible', 'img-fluid', 'shadow', 'collapse', 'text-success', 'modal-xl', 'card-link', 'flex-.*-column', 'flex-column', 'spinner-grow', 'sr-only-focusable', 'text-warning', 'align-content-.*-around', 'flex-.*-grow-0', 'progress-bar-striped', 'rounded', 'pt-.*-[0-9]+', 'bg-white', 'btn-primary', 'list-group-item-dark', 'nav-tabs', 'blockquote-reverse', 'dismissible', 'btn-secondary', 'alert-info', 'popover', 'embed-responsive', 'bg-.*', 'badge-dark', 'nested', 'font-italic', 'font-weight-normal', 'alert-danger', 'list-group-item-secondary', 'text-primary', 'spinner-grow-sm', 'flex-.*-shrink-0', 'form-control', 'btn-group-sm', 'list-group-item', 'border-white', 'btn-group-lg', 'card-header', 'col-.*', 'list-group-item-success', 'flex-.*-wrap-reverse', 'align-.*', 'align-items-.*-end', 'h-100', 'button', 'table-success', 'align-items-.*-baseline', 'pb-1', 'align-content-.*-stretch', 'btn-dark', 'table-active', 'progress-bar', 'text-body', 'border-success', 'list-unstyled', 'mx-.*-[0-9]+', 'p-1', 'form-check-inline', 'jumbotron-fluid', 'mw-100', 'items', 'badge-light', 'align-self-.*-stretch', 'shadow-lg', 'dropdown-header', 'invisible', 'custom-range', 'my-1', 'border-danger', 'mx-1', 'container-fluid', 'blockquote-footer', 'text-nowrap', 'badges', 'mr-.*-[0-9]+', 'd-print-...', 'table-sm', 'btn-outline-warning', 'ml-1', 'progress-bar-animated', 'flex-.*-row', 'm-1', 'd-.*-inline', 'form-check', 'float-.*-none', 'readonly', 'alert-heading', 'float-.*-left', 'align-self-start', 'order-[0-9]+', 'carousel-fade', 'text-dark', 'navbar', 'btn-light', 'dropdown-divider', 'shadow-none', 'alert-warning', 'navbar-expand-.*', 'dl-horizontal', 'col-[0-9]+', 'py-.*-[0-9]+', 'grid', 'btn-block', 'table-danger', 'table-borderless', 'list-group-item-primary', 'p-.*-[0-9]+', 'border-warning', 'spinner-border-sm', 'alert-secondary', 'd-flex', 'mt-1', 'carousel-caption', 'offset-.*-[0-9]+', 'custom-file', 'custom-select', 'text-...', 'stretched-link', 'label', 'pr-1', 'input-group-append', 'badge-secondary', 'list-group-item-danger', 'blockquote', 'align-self-.*-baseline', 'pr-.*-[0-9]+', 'badge-success', 'the', 'table-hover', 'table', 'px-1', 'btn-outline-info', 'btn-outline-danger', 'btn-info', 'text-secondary', 'btn-lg', 'text-break', 'bg-danger', 'align-content-.*-end', 'card-footer', 'order-.*-[0-9]+', 'rounded-0', 'card-img-top', 'thead-light', 'sr-only', 'alert-success', 'btn-link', 'border-light', 'font-weight-light', 'my-.*-[0-9]+', 'text-lowercase', 'display-[0-9]+', 'flex-.*-row-reverse', 'list-group', 'btn-outline-light', 'using', 'form-control-plaintext', 'card', 'badge-pill', 'col-md-[0-9]+', 'flex-.*-grow-1', 'mb-.*-[0-9]+', 'fade', 'align-content-.*-center', 'input-group-sm', 'text-info', 'form', 'btn-sm', 'dropdown', 'align-items-.*-start', 'btn-danger', 'btn-group', 'fixed-top', 'fixed-bottom', 'alert-dark', 'mb-1', 'flex-.*-column-reverse', 'bg-success', 'd-.*-inline-flex', 'aligned', 'sticky-top', 'breadcrumb', 'align-self-center', 'list-group-horizontal', 'columns', 'active', 'ml-.*-[0-9]+', 'with', 'border-dark', 'close', 'btn-toolbar', 'text-justify', 'badge-danger', 'float-.*-right', 'flex-.*-nowrap', 'border-secondary', 'border-primary', 'as', 'navbar-collapse', 'pl-.*-[0-9]+', 'mt-.*-[0-9]+', 'custom-switch', 'card-title', 'modal', 'navbar-toggler', 'card-text', 'img-thumbnail', 'badge-info', 'btn-group-vertical', 'modal-lg', 'align-items-.*-stretch', 'justify-content-.*-start', 'rounded-.*', 'text-capitalize', 'align-self-.*-center', 'text-white', 'text-truncate', 'navbar-light', 'modal-dialog-centered', 'align-items-.*-center', 'flex-fill', 'bg-...', 'dropup', 'pb-.*-[0-9]+', 'badge-primary', 'list-group-item-light', 'form-group', 'right', 'table-light', 'px-.*-[0-9]+', 'list-inline', 'text-.*', 'card-img-overlay', 'form-inline', 'text-white-50', 'btn-warning', 'alert-dismissible', 'table-bordered', 'justify-content-.*', 'alert-primary', 'text-decoration-none', 'form-control-lg', 'w-100', 'shadow-sm', 'utils', 'justify-content-.*-end', 'radio', 'table-primary', 'card-columns', 'tooltip', 'col', 'm-.*-n[0-9]+', 'pl-1', 'border-.*-0', 'accordion', 'modal-dialog-scrollable', 'd-.*-flex', 'rounded-lg', 'd-.*-table-cell', 'slide', 'justify-content-.*-center', 'dropdown-menu-right', 'buttons', 'font-weight-bold', 'bg-secondary', 'input-group', 'm-.*-[0-9]+', 'pt-1', 'table-warning', 'data-spy', 'jumbotron', 'font-weight-bolder', 'alert-link', 'card-subtitle', 'table-info', 'dropdown-item', 'modal-sm', 'pagination-lg', 'segmented', 'btn-success', 'flex', 'm-n1', 'rounded-circle', 'text-muted', 'lead', 'form-control-range', 'text-.*-right', 'flex-.*-wrap', 'input-group-lg', 'justify-content-.*-between', 'card-deck', 'flex-.*-shrink-1', 'carousel-indicators', 'card-body', 'dropleft', 'height', 'col-sm-[0-9]+', 'col-xl-[0-9]+', 'border', 'mr-1', 'text-hide', 'navbar-text', 'list-group-item-info', 'mh-100', 'bg-light', 'text-light', 'no-gutters', 'disabled', 'checkbox', 'pagination-sm', 'progress', 'h.*.card-header', 'multiple', 'nav', 'align-self-.*-end', 'carousel', 'nav-pills', 'table-.*-responsive', 'ul.nav', 'text-.*-left', 'table-dark', 'bg-dark', 'custom-radio', 'text-uppercase', 'badge', 'nav-justified', 'text-black-50', 'bg-primary', 'pagination', 'justify-content-.*-around', 'text-danger', 'btn-outline-success', 'dropdown-item-text', 'thead-dark', 'rounded-sm', 'd-.*-inline-block', 'dropright', 'btn-outline-primary', 'text-monospace', 'table-reflow', 'nav-fill', 'media', 'd-.*-block', 'input-group-prepend', 'table-striped', 'btn-outline-secondary']
         rules_found = set()
         fine_relations = self.construct_fine_relations()
         for parent in fine_relations:
