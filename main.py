@@ -7,6 +7,7 @@ import os
 import glob
 import tracemalloc
 from datetime import datetime
+from termcolor import colored, cprint
 
 class RuleComposer(Relations):
     TAG_OBJECT = None
@@ -17,12 +18,12 @@ class RuleComposer(Relations):
         Relations.__init__(self, threshold, star_depth_threshold)
 
         if os.path.isdir(train_set):
-            print('Is a directory')
+            cprint('Is a directory!', 'yellow')
             files_list = glob.glob(os.path.join(train_set, "*.htm*"))
             if max_training_pages and len(files_list) >= max_training_pages > 0:
                 files_list = files_list[:max_training_pages]
             for file in files_list:
-                print('Processing file: {}'.format(file))
+                cprint('Processing file: {}'.format(colored(file, 'blue')))
                 with open(file, 'r') as tr_p:
                     train_soup = BeautifulSoup(tr_p, 'html.parser')
                     for child in train_soup.childGenerator():
@@ -30,9 +31,10 @@ class RuleComposer(Relations):
                             self.get_parents_recursively(child)
 
         elif os.path.isfile(train_set):
-            print('Is a file')
+            cprint('Is a file!', 'yellow')
             with open(train_set, 'r') as tr_p:
-                print('Processing file: {}'.format(train_set))
+                # print('Processing file: {}'.format(train_set))
+                cprint('Processing file: {}'.format(colored(train_set, 'blue')))
                 train_soup = BeautifulSoup(tr_p, 'html.parser')
                 for child in train_soup.childGenerator():
                     if isinstance(child, Tag):
@@ -41,13 +43,13 @@ class RuleComposer(Relations):
         end_time = datetime.now()
         total_seconds = (end_time - start_time).total_seconds()
         current, peak = tracemalloc.get_traced_memory()
-        print('Total time for training {} pages: {} seconds'.format(max_training_pages, total_seconds))
-        print('Total number of coarse rules learned: {}'.format(self.get_number_of_coarse_rules_composed()))
-        print('Total number of coarse nodes: {}'.format(self.get_number_of_coarse_nodes_composed()))
-        print('Total number of fine rules learned: {}'.format(self.get_number_of_fine_rules_composed()))
-        print('Total number of fine nodes: {}'.format(self.get_number_of_fine_nodes_composed()))
-        print('Total number of distinct bootstrap classes identified: {}'.format(len(self.get_distinct_fine_grain_classes())))
-        print("Peak memory usage was {} MB".format((peak / 10 ** 6)))
+        cprint('Total time for training {} pages: {} seconds'.format(colored(max_training_pages, 'cyan'), colored(total_seconds, 'cyan')))
+        cprint('Total number of coarse rules learned: {}'.format(colored(self.get_number_of_coarse_rules_composed(), 'cyan')))
+        cprint('Total number of coarse nodes: {}'.format(colored(self.get_number_of_coarse_nodes_composed(), 'cyan')))
+        cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
+        cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
+        cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
+        cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
     def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes):
@@ -292,7 +294,7 @@ class RuleComposer(Relations):
                             passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
-                                print(errors)
+                                cprint(errors)
                     else:
                         continue
                     self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes)

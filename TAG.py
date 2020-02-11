@@ -1,4 +1,6 @@
 import re
+from termcolor import colored, cprint
+
 class Relations():
     child_parents_dict = {}
     THRESHOLD = 1
@@ -291,7 +293,7 @@ class Relations():
                     if not fine_relations.get(cls, {}).get(ccls, {}):
                         if ignore_unseen_classes:
                             continue
-                        error = 'Error in line: {};  Parent: {} has no relation to child: {}'.format(source_line, cls, ccls)
+                        error = 'Error in line {} ---> Parent: {} has no relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'))
                         # print(error)
                         # return False, error
                         combined_errors.append(error)
@@ -303,8 +305,8 @@ class Relations():
                             pass
                         else:
                             if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                                error = 'Error in line: {};  Parent: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
-                                    source_line, cls, ccls, depth, fine_relations.get(cls, {}).get(ccls, {}))
+                                error = 'Error in line {} ---> Parent: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
+                                    colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'), colored(depth, 'red'), colored(fine_relations.get(cls, {}).get(ccls, {}), 'green'))
                                 # print(error)
                                 combined_errors.append(error)
                             else:
@@ -435,16 +437,18 @@ class Relations():
         if self.star_depth_threshold:
             for cls in fine_relations:
                 for ccls in fine_relations[cls]:
-                    flag = True
-                    for i in range(1, self.star_depth_threshold + 1):
-                        if fine_relations[cls][ccls] == "*":
-                            continue
-                        else:
-                            if i not in fine_relations[cls][ccls]:
-                                flag = False
-                                break
-                    if flag:
+                    if len(fine_relations[cls][ccls]) >= self.star_depth_threshold:
                         fine_relations[cls][ccls] = '*'
+                    # flag = True
+                    # for i in range(1, self.star_depth_threshold + 1):
+                    #     if fine_relations[cls][ccls] == "*":
+                    #         continue
+                    #     else:
+                    #         if i not in fine_relations[cls][ccls]:
+                    #             flag = False
+                    #             break
+                    # if flag:
+                    #     fine_relations[cls][ccls] = '*'
 
 
         # print('fine_relations ', fine_relations)
