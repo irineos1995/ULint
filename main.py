@@ -28,7 +28,6 @@ class RuleComposer(Relations):
                     for child in train_soup.childGenerator():
                         if isinstance(child, Tag):
                             self.get_parents_recursively(child)
-                            break
 
         elif os.path.isfile(train_set):
             print('Is a file')
@@ -38,7 +37,7 @@ class RuleComposer(Relations):
                 for child in train_soup.childGenerator():
                     if isinstance(child, Tag):
                         self.get_parents_recursively(child)
-                        break
+
         end_time = datetime.now()
         total_seconds = (end_time - start_time).total_seconds()
         current, peak = tracemalloc.get_traced_memory()
@@ -51,14 +50,13 @@ class RuleComposer(Relations):
         print("Peak memory usage was {} MB".format((peak / 10 ** 6)))
         tracemalloc.stop()
 
-    def compare_test_page(self, test_page, allow_fine_grain_relations=False):
+    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
 
             for child in test_soup.childGenerator():
                 if isinstance(child, Tag):
-                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations)
-                    break
+                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes)
 
 
     def create_graph(self):
@@ -279,7 +277,7 @@ class RuleComposer(Relations):
 
 
 
-    def get_parents_recursively_for_test(self, tree, allow_fine_relations=False):
+    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes):
         if not tree:
             return
         else:
@@ -291,13 +289,13 @@ class RuleComposer(Relations):
                             parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
                             if not parents:
                                 parents = [()]
-                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations)
+                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 print(errors)
                     else:
                         continue
-                    self.get_parents_recursively_for_test(child, allow_fine_relations)
+                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes)
             else:
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
