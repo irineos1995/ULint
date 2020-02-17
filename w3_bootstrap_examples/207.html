@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container mt-3">
+  <h2>Custom Radio Buttons</h2>
+  <p>To create a custom radio button, wrap a container element, like div, with a class of .custom-control and .custom-radio around the radio button. Then add the .custom-control-input to the radio button.</p>
+  <p><strong>Tip:</strong> If you use labels for accompanying text, add the .custom-control-label class to it. Note that the value of the for attribute should match the id of the radio:</p>
+  <form action="/action_page.php">
+    <div class="custom-control custom-radio">
+      <input class="custom-control-input" id="customRadio" name="example1" type="radio"/>
+      <label class="custom-control-label" for="customRadio">Custom radio</label>
+    </div>    
+    <input id="defaultRadio" name="example2" type="radio"/>
+    <label for="defaultRadio">Default radio</label>
+    <br/>
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+</div>
+
+</body>
+</html>
