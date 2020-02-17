@@ -8,9 +8,13 @@ import glob
 import tracemalloc
 from datetime import datetime
 from termcolor import colored, cprint
+from NN import NeuralNetwork
 
-class RuleComposer(Relations):
+class RuleComposer(Relations, NeuralNetwork):
     TAG_OBJECT = None
+    graph = None
+    fine_graph = None
+    sourceline_errors_for_NN = []
 
     def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None):
         start_time = datetime.now()
@@ -43,22 +47,37 @@ class RuleComposer(Relations):
         end_time = datetime.now()
         total_seconds = (end_time - start_time).total_seconds()
         current, peak = tracemalloc.get_traced_memory()
+        if not max_training_pages and files_list:
+            max_training_pages = len(files_list)
+
         cprint('Total time for training {} pages: {} seconds'.format(colored(max_training_pages, 'cyan'), colored(total_seconds, 'cyan')))
         cprint('Total number of coarse rules learned: {}'.format(colored(self.get_number_of_coarse_rules_composed(), 'cyan')))
         cprint('Total number of coarse nodes: {}'.format(colored(self.get_number_of_coarse_nodes_composed(), 'cyan')))
+        # cprint('Total number of coarse nodes (NetworkX): {}'.format(colored(number_of_coarse_nodes, 'cyan')))
         cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
         cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
+        # cprint('Total number of fine nodes (NetworkX): {}'.format(colored(number_of_fine_nodes), 'cyan'))
         cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
         cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
-    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes):
+    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
 
             for child in test_soup.childGenerator():
                 if isinstance(child, Tag):
-                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes)
+                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings)
+
+
+    def get_graph_distinct_nodes(self, graph):
+        nodes = set()
+        for node in graph.nodes:
+            print(node)
+            eval_node = eval(node)
+            sorted_node = tuple(sorted(eval_node))
+            nodes.add(sorted_node)
+        return nodes
 
 
     def create_graph(self):
@@ -243,9 +262,9 @@ class RuleComposer(Relations):
         return G
 
     def plot_directed_graph(self, filename):
-        graph = self.create_graph()
+        self.graph = self.create_graph()
         # plot_graph(graph)
-        draw_graph3(graph, output_filename=filename)
+        draw_graph3(self.graph, output_filename=filename)
 
     def plot_fine_directed_graph(self, filename):
         graph = self.create_fine_graph()
@@ -253,9 +272,9 @@ class RuleComposer(Relations):
         draw_fine_graph3(graph, output_filename=filename)
 
     def plot_fine_directed_graph_v2(self, filename):
-        graph = self.create_fine_graph_v2()
+        self.fine_graph = self.create_fine_graph_v2()
         # plot_graph(graph)
-        draw_fine_graph3_v2(graph, output_filename=filename)
+        draw_fine_graph3_v2(self.fine_graph, output_filename=filename)
 
     def get_parents_recursively(self, tree):
         if not tree:
@@ -279,7 +298,7 @@ class RuleComposer(Relations):
 
 
 
-    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes):
+    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings):
         if not tree:
             return
         else:
@@ -291,13 +310,18 @@ class RuleComposer(Relations):
                             parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
                             if not parents:
                                 parents = [()]
-                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes)
+                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 cprint(errors)
+                                self.sourceline_errors_for_NN += errors_list_for_nn_processing
                     else:
                         continue
-                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes)
+                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings)
             else:
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
+
+    def generate_nn_training_data(self):
+        self.process_errors(self.sourceline_errors_for_NN)
+        return
