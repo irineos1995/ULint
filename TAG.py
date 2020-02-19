@@ -6,6 +6,7 @@ class Relations():
     THRESHOLD = 1
     line_number_with_errors = set()
     star_depth_threshold = None
+    depths_of_errors = []
 
     def __init__(self, threshold, star_depth_threshold):
         self.child_parents_dict = {}
@@ -300,11 +301,13 @@ class Relations():
                             if include_warnings:
                                 warning = 'Warning in line {} ---> Parent: {} has no relation to child: {}'.format(
                                     colored(source_line, 'magenta'), colored(cls, 'blue'), colored(ccls, 'blue'))
+                                self.depths_of_errors.append(depth)
                                 combined_errors.append(warning)
                             continue
                         error = 'Error in line {} ---> Parent: {} has no relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'))
                         # print(error)
                         # return False, error
+                        self.depths_of_errors.append(depth)
                         combined_errors.append(error)
                     else:
                         if depth_cap and depth > depth_cap:
@@ -319,6 +322,7 @@ class Relations():
                                 error = 'Error in line {} ---> Parent: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
                                     colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'), colored(depth, 'red'), colored(fine_relations.get(cls, {}).get(ccls, {}), 'green'))
                                 # print(error)
+                                self.depths_of_errors.append(depth)
                                 combined_errors.append(error)
                                 neural_network_list.append([
                                     source_line,

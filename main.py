@@ -325,3 +325,23 @@ class RuleComposer(Relations, NeuralNetwork):
     def generate_nn_training_data(self):
         self.process_errors(self.sourceline_errors_for_NN)
         return
+
+    def depth_of_errors_report(self):
+        errors_list = self.depths_of_errors
+        errors_set = sorted(set(errors_list))
+
+        total_number_of_errors = len(errors_list)
+
+        report = []
+
+        total_percentage = 0
+        for depth in errors_set:
+            percentage = round((errors_list.count(depth)/total_number_of_errors)*100, 2)
+            total_percentage += percentage
+            error_msg = '{} of errors were found in depth {}'.format(colored(str(percentage) + ' %', 'blue'), colored(depth, 'red'))
+            report.append(error_msg)
+        report.append(
+            'Total percentage for completeness {}'.format(colored(str(round(total_percentage, 2)) + ' %', 'blue'))
+        )
+
+        return '\n'.join(report)
