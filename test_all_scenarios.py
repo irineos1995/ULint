@@ -259,7 +259,7 @@ class TestScenario13(unittest.TestCase):
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
-                                              include_warnings=True
+                                              include_warnings=False
                                               )
 
         errors = rule_composer_class.get_line_number_errors()
@@ -299,3 +299,21 @@ class TestScenario14(unittest.TestCase):
 
         print(rule_composer_class.predict([[128,212,2], [128,2,-1]]))
         self.assertEqual([], [])
+
+class TestScenario15(unittest.TestCase):
+    def test_depth_cap(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3)
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=3
+                                              )
+
+        errors = rule_composer_class.get_line_number_errors()
+
+        set_of_errors = set(errors)
+        print(set_of_errors)
+        print(len(set_of_errors))
+
+        self.assertFalse(365 in set_of_errors)

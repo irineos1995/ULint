@@ -283,7 +283,7 @@ class Relations():
                     return True
         return False
 
-    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings):
+    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap):
         combined_errors = []
         neural_network_list = [] # [[sourceLine, parent, child, depth], [sourceLine, parent, child, depth]]
         fine_relations = self.construct_fine_relations()
@@ -307,6 +307,8 @@ class Relations():
                         # return False, error
                         combined_errors.append(error)
                     else:
+                        if depth_cap and depth > depth_cap:
+                            continue
                         if fine_relations.get(cls, {}).get(ccls, {}) == "*":
                             # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {} because depth = "*"'.format(
                             #         source_line, cls,
@@ -340,13 +342,13 @@ class Relations():
         return False
 
 
-    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings):
+    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings)
+            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
                 return False, '\n'.join(errors), errors_list_for_nn_processing
