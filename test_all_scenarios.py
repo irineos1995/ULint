@@ -308,9 +308,11 @@ class TestScenario15(unittest.TestCase):
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
-                                              depth_cap=3
+                                              depth_cap=3,
+                                              parent_level_errors=True
                                               )
 
+        rule_composer_class.print_parent_level_errors()
         errors = rule_composer_class.get_line_number_errors()
 
         set_of_errors = set(errors)

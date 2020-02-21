@@ -1,12 +1,13 @@
 import re
 from termcolor import colored, cprint
 
-class Relations():
+class Relations:
     child_parents_dict = {}
     THRESHOLD = 1
     line_number_with_errors = set()
     star_depth_threshold = None
     depths_of_errors = []
+    parent_level_errors_dict = {}
 
     def __init__(self, threshold, star_depth_threshold):
         self.child_parents_dict = {}
@@ -284,7 +285,7 @@ class Relations():
                     return True
         return False
 
-    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap):
+    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors):
         combined_errors = []
         neural_network_list = [] # [[sourceLine, parent, child, depth], [sourceLine, parent, child, depth]]
         fine_relations = self.construct_fine_relations()
@@ -292,6 +293,7 @@ class Relations():
             # if not self.seen_class(ccls) and ignore_unseen_classes:
             #     continue
             for depth, parent in enumerate(parents_list):
+                parent_line_number = parent_line_numbers[depth]
                 depth += 1
                 for cls in parent:
                     # if not self.seen_class(cls) and ignore_unseen_classes:
@@ -304,7 +306,27 @@ class Relations():
                                 self.depths_of_errors.append(depth)
                                 combined_errors.append(warning)
                             continue
-                        error = 'Error in line {} ---> Parent: {} has no relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'))
+                        if parent_level_errors:
+                            if parent_line_number not in self.parent_level_errors_dict:
+                                self.parent_level_errors_dict[parent_line_number] = [
+                                    '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                        colored(cls, 'blue',),
+                                        colored(ccls, 'blue'),
+                                        colored(source_line, 'cyan'),
+                                        colored(depth, 'red')
+                                    )
+                                ]
+                            else:
+                                self.parent_level_errors_dict[parent_line_number].append(
+                                    '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                        colored(cls, 'blue', ),
+                                        colored(ccls, 'blue'),
+                                        colored(source_line, 'cyan'),
+                                        colored(depth, 'red')
+                                    )
+                                )
+
+                        error = 'Error in line {} ---> Parent: {} at line: {} has no relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(parent_line_number, 'cyan'), colored(ccls, 'blue'))
                         # print(error)
                         # return False, error
                         self.depths_of_errors.append(depth)
@@ -319,8 +341,8 @@ class Relations():
                             pass
                         else:
                             if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                                error = 'Error in line {} ---> Parent: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
-                                    colored(source_line, 'red'), colored(cls, 'blue'), colored(ccls, 'blue'), colored(depth, 'red'), colored(fine_relations.get(cls, {}).get(ccls, {}), 'green'))
+                                error = 'Error in line {} ---> Parent: {} at line: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
+                                    colored(source_line, 'red'), colored(cls, 'blue'), colored(parent_line_number, 'cyan'), colored(ccls, 'blue'), colored(depth, 'red'), colored(fine_relations.get(cls, {}).get(ccls, {}), 'green'))
                                 # print(error)
                                 self.depths_of_errors.append(depth)
                                 combined_errors.append(error)
@@ -330,10 +352,31 @@ class Relations():
                                     ccls,
                                     depth
                                 ])
+                                if parent_level_errors:
+                                    if parent_line_number not in self.parent_level_errors_dict:
+                                        self.parent_level_errors_dict[parent_line_number] = [
+                                            '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                                colored(cls, 'blue', ),
+                                                colored(ccls, 'blue'),
+                                                colored(source_line, 'cyan'),
+                                                colored(depth, 'red')
+                                            )
+                                        ]
+                                    else:
+                                        self.parent_level_errors_dict[parent_line_number].append(
+                                            '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                                colored(cls, 'blue', ),
+                                                colored(ccls, 'blue'),
+                                                colored(source_line, 'cyan'),
+                                                colored(depth, 'red')
+                                            )
+                                        )
+
                             else:
                                 # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
                                 #                                                                       ccls, depth))
                                 pass
+
         if combined_errors:
             return False, combined_errors, neural_network_list
         return True, '', []
@@ -346,13 +389,13 @@ class Relations():
         return False
 
 
-    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap):
+    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap)
+            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
                 return False, '\n'.join(errors), errors_list_for_nn_processing
@@ -570,5 +613,16 @@ class Relations():
                     if re.match(rule, child):
                         rules_found.add(rule)
         return rules_found
+
+
+    def print_parent_level_errors(self):
+        errors = self.parent_level_errors_dict
+        ordered_errors = dict(sorted(errors.items()))
+        for pln, lst in ordered_errors.items():
+            initial_line = 'Error in line {} ---|\n'.format(colored(pln, 'red'))
+            cprint(initial_line + '\n'.join(lst))
+        cprint('Number of "parent line number" errors = {}'.format(colored(len(ordered_errors), 'red')))
+        return
+
 
 

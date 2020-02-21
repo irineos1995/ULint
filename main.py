@@ -61,13 +61,13 @@ class RuleComposer(Relations, NeuralNetwork):
         cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
-    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None):
+    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False):
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
 
             for child in test_soup.childGenerator():
                 if isinstance(child, Tag):
-                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap)
+                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors)
 
 
     def get_graph_distinct_nodes(self, graph):
@@ -298,7 +298,7 @@ class RuleComposer(Relations, NeuralNetwork):
 
 
 
-    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap):
+    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors):
         if not tree:
             return
         else:
@@ -308,16 +308,18 @@ class RuleComposer(Relations, NeuralNetwork):
                         child_class = child.get("class", [])
                         if child_class:
                             parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
+                            parent_line_numbers = [parent.sourceline for parent in child.parents]
                             if not parents:
                                 parents = [()]
-                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap)
+                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 cprint(errors)
+                                # print('-'*50)
                                 self.sourceline_errors_for_NN += errors_list_for_nn_processing
                     else:
                         continue
-                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap)
+                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors)
             else:
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
