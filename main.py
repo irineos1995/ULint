@@ -16,18 +16,18 @@ class RuleComposer(Relations, NeuralNetwork):
     fine_graph = None
     sourceline_errors_for_NN = []
 
-    def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None):
+    def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None, debug=False):
         start_time = datetime.now()
         tracemalloc.start()
         Relations.__init__(self, threshold, star_depth_threshold)
 
         if os.path.isdir(train_set):
-            cprint('Is a directory!', 'yellow')
+            if debug: cprint('Is a directory!', 'yellow')
             files_list = glob.glob(os.path.join(train_set, "*.htm*"))
             if max_training_pages and len(files_list) >= max_training_pages > 0:
                 files_list = files_list[:max_training_pages]
             for file in files_list:
-                cprint('Processing file: {}'.format(colored(file, 'blue')))
+                if debug: cprint('Processing file: {}'.format(colored(file, 'blue')))
                 with open(file, 'r') as tr_p:
                     train_soup = BeautifulSoup(tr_p, 'html.parser')
                     for child in train_soup.childGenerator():
@@ -35,10 +35,10 @@ class RuleComposer(Relations, NeuralNetwork):
                             self.get_parents_recursively(child)
 
         elif os.path.isfile(train_set):
-            cprint('Is a file!', 'yellow')
+            if debug: cprint('Is a file!', 'yellow')
             with open(train_set, 'r') as tr_p:
                 # print('Processing file: {}'.format(train_set))
-                cprint('Processing file: {}'.format(colored(train_set, 'blue')))
+                if debug: cprint('Processing file: {}'.format(colored(train_set, 'blue')))
                 train_soup = BeautifulSoup(tr_p, 'html.parser')
                 for child in train_soup.childGenerator():
                     if isinstance(child, Tag):
@@ -50,15 +50,16 @@ class RuleComposer(Relations, NeuralNetwork):
         if not max_training_pages and files_list:
             max_training_pages = len(files_list)
 
-        cprint('Total time for training {} pages: {} seconds'.format(colored(max_training_pages, 'cyan'), colored(total_seconds, 'cyan')))
-        cprint('Total number of coarse rules learned: {}'.format(colored(self.get_number_of_coarse_rules_composed(), 'cyan')))
-        cprint('Total number of coarse nodes: {}'.format(colored(self.get_number_of_coarse_nodes_composed(), 'cyan')))
-        # cprint('Total number of coarse nodes (NetworkX): {}'.format(colored(number_of_coarse_nodes, 'cyan')))
-        cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
-        cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
-        # cprint('Total number of fine nodes (NetworkX): {}'.format(colored(number_of_fine_nodes), 'cyan'))
-        cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
-        cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
+        if debug:
+            cprint('Total time for training {} pages: {} seconds'.format(colored(max_training_pages, 'cyan'), colored(total_seconds, 'cyan')))
+            cprint('Total number of coarse rules learned: {}'.format(colored(self.get_number_of_coarse_rules_composed(), 'cyan')))
+            cprint('Total number of coarse nodes: {}'.format(colored(self.get_number_of_coarse_nodes_composed(), 'cyan')))
+            # cprint('Total number of coarse nodes (NetworkX): {}'.format(colored(number_of_coarse_nodes, 'cyan')))
+            cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
+            cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
+            # cprint('Total number of fine nodes (NetworkX): {}'.format(colored(number_of_fine_nodes), 'cyan'))
+            cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
+            cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
     def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False):
@@ -285,7 +286,8 @@ class RuleComposer(Relations, NeuralNetwork):
                     if isinstance(child, Tag):
                         child_class = child.get("class", [])
                         if child_class:
-                            parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
+                            # parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
+                            parents = [tuple(parent.get('class', ())) for parent in child.parents]
                             if not parents:
                                 parents = [()]
                             self.add_parents(tuple(child_class), parents)
@@ -307,14 +309,17 @@ class RuleComposer(Relations, NeuralNetwork):
                     if isinstance(child, Tag):
                         child_class = child.get("class", [])
                         if child_class:
-                            parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
+                            # parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
+                            parents = [tuple(parent.get('class', ())) for parent in child.parents]
+                            # parent_line_numbers = [parent.sourceline for parent in child.parents if parent.get('class', [])]
                             parent_line_numbers = [parent.sourceline for parent in child.parents]
                             if not parents:
                                 parents = [()]
+                                parent_line_numbers = []
                             passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
-                                cprint(errors)
+                                # cprint(errors)
                                 # print('-'*50)
                                 self.sourceline_errors_for_NN += errors_list_for_nn_processing
                     else:

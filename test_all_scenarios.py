@@ -308,7 +308,7 @@ class TestScenario15(unittest.TestCase):
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
-                                              depth_cap=3,
+                                              depth_cap=2,
                                               parent_level_errors=True
                                               )
 

@@ -8,12 +8,16 @@ class Relations:
     star_depth_threshold = None
     depths_of_errors = []
     parent_level_errors_dict = {}
+    independent_classes = []
 
     def __init__(self, threshold, star_depth_threshold):
         self.child_parents_dict = {}
         self.THRESHOLD = threshold
         self.line_number_with_errors = set()
         self.star_depth_threshold = star_depth_threshold
+
+        with open('independent_classes', 'r') as rfl:
+            self.independent_classes = [line.strip().replace(' ', '') for line in rfl.readlines() if line]
 
     def equal_list_of_tuples(self, list1, list2):
         if len(list1) != len(list2):
@@ -289,16 +293,23 @@ class Relations:
         combined_errors = []
         neural_network_list = [] # [[sourceLine, parent, child, depth], [sourceLine, parent, child, depth]]
         fine_relations = self.construct_fine_relations()
+        parent_classes = [i for i in fine_relations.keys()]
+
+        child_unprocessed_dicts = [i.keys() for i in fine_relations.values()]
+        child_classes = [key for key in child_unprocessed_dicts]
+
+
         for ccls in child_tuple:
             # if not self.seen_class(ccls) and ignore_unseen_classes:
             #     continue
             for depth, parent in enumerate(parents_list):
-                parent_line_number = parent_line_numbers[depth]
+                if parent_line_numbers:
+                    parent_line_number = parent_line_numbers[depth]
                 depth += 1
                 for cls in parent:
-                    # if not self.seen_class(cls) and ignore_unseen_classes:
-                    #     continue
-                    if not fine_relations.get(cls, {}).get(ccls, {}):
+                    if cls in self.independent_classes or ccls in self.independent_classes:
+                        continue
+                    if cls not in parent_classes and ccls not in child_classes: # BUG HERE
                         if ignore_unseen_classes:
                             if include_warnings:
                                 warning = 'Warning in line {} ---> Parent: {} has no relation to child: {}'.format(
@@ -306,7 +317,7 @@ class Relations:
                                 self.depths_of_errors.append(depth)
                                 combined_errors.append(warning)
                             continue
-                        if parent_level_errors:
+                        if parent_level_errors and parent_line_numbers:
                             if parent_line_number not in self.parent_level_errors_dict:
                                 self.parent_level_errors_dict[parent_line_number] = [
                                     '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
@@ -352,7 +363,7 @@ class Relations:
                                     ccls,
                                     depth
                                 ])
-                                if parent_level_errors:
+                                if parent_level_errors and parent_line_numbers:
                                     if parent_line_number not in self.parent_level_errors_dict:
                                         self.parent_level_errors_dict[parent_line_number] = [
                                             '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
@@ -477,7 +488,10 @@ class Relations:
                     for ccls in child:
                         if fine_relations.get(cls, ()):
                             if fine_relations[cls].get(ccls, ()):
-                                fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
+                                if fine_relations[cls][ccls] == '*':
+                                    continue
+                                else:
+                                    fine_relations[cls][ccls] = fine_relations[cls][ccls].union(child_depth)
                             else:
                                 fine_relations[cls][ccls] = child_depth
                         else:
@@ -618,6 +632,7 @@ class Relations:
     def print_parent_level_errors(self):
         errors = self.parent_level_errors_dict
         ordered_errors = dict(sorted(errors.items()))
+        print('\n')
         for pln, lst in ordered_errors.items():
             initial_line = 'Error in line {} ---|\n'.format(colored(pln, 'red'))
             cprint(initial_line + '\n'.join(lst))
