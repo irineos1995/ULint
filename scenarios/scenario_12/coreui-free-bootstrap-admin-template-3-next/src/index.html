@@ -53,9 +53,6 @@
     <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
   </head>
   <body class="c-app">
-    <div class="row">
-      <div class="c-app"></div>
-    </div>
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
       <div class="c-sidebar-brand d-lg-down-none">
         <svg class="c-sidebar-brand-full" width="118" height="46" alt="CoreUI Logo">
@@ -211,7 +208,8 @@
               <svg class="c-icon">
                 <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-envelope-open"></use>
               </svg></a></li>
-          <li class="c-header-nav-item dropdown"><a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <li class="c-header-nav-item dropdown">
+            <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
               <div class="c-avatar"><img class="c-avatar-img" src="assets/img/avatars/6.jpg" alt="user@email.com"></div>
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0">
@@ -434,10 +432,13 @@
                       </div>
                     </div>
                     <div class="card-body row text-center">
-                      <div class="col">
-                        <div class="text-value-xl">89k</div>
-                        <div class="text-uppercase text-muted small">friends</div>
+                      <div class="col-md-1 col">
+                        <div class="col">
+                          <div class="text-value-xl">89k</div>
+                          <div class="text-uppercase text-muted small">friends</div>
+                        </div>
                       </div>
+
                       <div class="c-vr"></div>
                       <div class="col">
                         <div class="text-value-xl">459</div>

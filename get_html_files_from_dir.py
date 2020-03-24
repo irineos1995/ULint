@@ -10,7 +10,7 @@ def move_file_from_source_go_target(source, target):
 def get_list_of_all_html_files(dir):
     if os.path.isdir(dir):
         print('Is a directory!')
-    files_list = glob.glob(os.path.join(dir, "**/*.htm*"), recursive=True)
+    files_list = glob.glob(os.path.join(dir, "**/*.html"), recursive=True)
     return files_list
 
 def write_files_to_target(files, target):
@@ -24,8 +24,8 @@ def write_files_to_target(files, target):
 
         print('Processed: {}'.format(file))
     return
-files_list = get_list_of_all_html_files('bootstrap-4.3.1')
-target_path = 'scenarios/scenario_12/bootstrap_4_html_files'
+files_list = get_list_of_all_html_files('frameworks-examples/foundation-sites-develop/test-pages')
+target_path = 'frameworks-examples/foundation-sites-develop'
 
 write_files_to_target(files_list, target_path)
 

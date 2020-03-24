@@ -1,18 +1,18 @@
-- category: Custom components
-  description: "Brand new components and templates to help folks quickly get started with Bootstrap and demonstrate best practices for adding onto the framework."
+- category: Custom vue-material-training
+  description: "Brand new vue-material-training and templates to help folks quickly get started with Bootstrap and demonstrate best practices for adding onto the framework."
   examples:
     - name: Album
       description: "Simple one-page template for photo galleries, portfolios, and more."
     - name: Pricing
       description: "Example pricing page built with Cards and featuring a custom header and footer."
     - name: Checkout
-      description: "Custom checkout form showing our form components and their validation features."
+      description: "Custom checkout form showing our form vue-material-training and their validation features."
     - name: Product
       description: "Lean product-focused marketing page with extensive grid and image work."
     - name: Cover
       description: "A one-page template for building simple and beautiful home pages."
     - name: Carousel
-      description: "Customize the navbar and carousel, then add some new components."
+      description: "Customize the navbar and carousel, then add some new vue-material-training."
     - name: Blog
       description: "Magazine like blog template with header, navigation, featured content."
     - name: Dashboard
@@ -25,7 +25,7 @@
       description: "Attach a footer to the bottom of the viewport with a fixed top navbar."
 
 - category: Framework
-  description: "Examples that focus on implementing uses of built-in components provided by Bootstrap."
+  description: "Examples that focus on implementing uses of built-in vue-material-training provided by Bootstrap."
   examples:
     - name: "Starter template"
       description: "Nothing but the basics: compiled CSS and JavaScript."

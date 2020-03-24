@@ -43,7 +43,7 @@ export default {
   async mounted() {
     window.$ = window.jQuery = $;
     await import("jvectormap-next");
-    await import("./world_map");
+    await import("./components/WorldMap/world_map");
     this.initVectorMap();
   }
 };

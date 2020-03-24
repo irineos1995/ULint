@@ -10,3 +10,12 @@ text-white
 bg-primary
 font-weight-bold
 align-items-end
+bg-facebook
+content-center
+c-icon
+c-icon-3xl
+text-value-xl
+fas
+fa-bars
+ml-auto
+text-danger

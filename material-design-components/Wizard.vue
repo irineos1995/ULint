@@ -89,7 +89,7 @@
   </div>
 </template>
 <script>
-import { throttle } from "./throttle";
+import { throttle } from "./components/Wizard/throttle";
 
 export default {
   name: "simple-wizard",
