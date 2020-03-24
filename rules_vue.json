@@ -1,0 +1,1376 @@
+{
+    "()": {
+        "md-table-cell-selection": [
+            1,
+            2
+        ],
+        "md-table-cell-container": [
+            2,
+            3
+        ],
+        "md-dialog": "*",
+        "md-dialog-container": "*",
+        "md-table-empty-state": [
+            1,
+            2
+        ],
+        "md-table-row": [
+            1,
+            2
+        ],
+        "md-dialog-title": [
+            1,
+            2
+        ],
+        "md-title": [
+            1,
+            2
+        ],
+        "md-table-head": [
+            1,
+            2
+        ],
+        "md-table-head-container": [
+            2,
+            3
+        ],
+        "md-table-head-label": [
+            3,
+            4
+        ],
+        "md-table-sortable-icon": [
+            4,
+            5
+        ],
+        "md-list-item-fake-button": [
+            1,
+            2
+        ],
+        "md-datepicker-dialog": "*",
+        "md-datepicker-header": "*",
+        "md-datepicker-year-select": "*",
+        "md-datepicker-date-select": "*",
+        "md-datepicker-dayname": "*",
+        "md-datepicker-monthname": "*",
+        "md-datepicker-day": "*",
+        "md-datepicker-body": "*",
+        "md-datepicker-body-header": "*",
+        "md-dense": "*",
+        "md-icon-button": "*",
+        "md-datepicker-body-content": "*",
+        "md-datepicker-calendar": "*",
+        "md-datepicker-panel": "*",
+        "md-datepicker-month": "*",
+        "md-datepicker-month-trigger": "*",
+        "md-datepicker-week": "*",
+        "md-datepicker-days": "*",
+        "md-datepicker-empty": "*",
+        "md-datepicker-day-button": "*",
+        "md-datepicker-month-selector": "*",
+        "md-datepicker-year-trigger": "*",
+        "md-datepicker-month-button": "*",
+        "md-datepicker-year-selector": "*",
+        "md-scrollbar": "*",
+        "md-datepicker-year-button": "*",
+        "md-datepicker-body-footer": "*",
+        "md-primary": "*",
+        "md-tooltip": "*",
+        "md-icon": [
+            1,
+            2
+        ],
+        "md-icon-image": [
+            1,
+            2
+        ],
+        "md-icon-font": [
+            1,
+            2
+        ],
+        "md-dialog-actions": [
+            1,
+            2
+        ],
+        "md-list-item-expand": [
+            1,
+            2
+        ],
+        "md-list-expand-icon": "*",
+        "md-list-expand": [
+            2,
+            3
+        ],
+        "md-menu-content-container": "*",
+        "md-table-cell": [
+            1,
+            2
+        ],
+        "md-autocomplete": [
+            1,
+            2
+        ],
+        "md-autocomplete-loading": "*",
+        "md-autocomplete-items": "*",
+        "md-autocomplete-empty": "*",
+        "md-table-pagination": [
+            1,
+            2
+        ],
+        "md-table-pagination-label": "*",
+        "md-table-pagination-previous": [
+            2,
+            3
+        ],
+        "md-table-pagination-next": [
+            2,
+            3
+        ],
+        "md-card-content": [
+            1,
+            2
+        ],
+        "md-radio": [
+            1,
+            2
+        ],
+        "md-radio-container": [
+            2,
+            3
+        ],
+        "md-radio-label": [
+            2,
+            3
+        ],
+        "md-stepper": [
+            1,
+            2
+        ],
+        "md-stepper-content": [
+            2,
+            3
+        ],
+        "md-stepper-header": [
+            1,
+            2
+        ],
+        "md-stepper-icon": [
+            2,
+            3
+        ],
+        "md-stepper-number": [
+            2,
+            3
+        ],
+        "md-stepper-editable": [
+            3,
+            4
+        ],
+        "md-stepper-done": [
+            3,
+            4
+        ],
+        "md-stepper-text": [
+            2,
+            3
+        ],
+        "md-stepper-label": [
+            3,
+            4
+        ],
+        "md-stepper-error": [
+            3,
+            4
+        ],
+        "md-stepper-description": [
+            3,
+            4
+        ],
+        "md-card-actions": [
+            1,
+            2
+        ],
+        "md-card-header": [
+            1,
+            2
+        ],
+        "md-steppers": [
+            1,
+            2
+        ],
+        "md-steppers-navigation": [
+            2,
+            3
+        ],
+        "md-steppers-wrapper": [
+            2,
+            3
+        ],
+        "md-steppers-container": [
+            3,
+            4
+        ],
+        "md-list-item-default": [
+            1,
+            2
+        ],
+        "md-field": [
+            1,
+            2
+        ],
+        "md-count": [
+            2,
+            3
+        ],
+        "md-clear": "*",
+        "md-input-action": "*",
+        "md-toggle-password": "*",
+        "md-tabs": [
+            1,
+            2
+        ],
+        "md-tabs-navigation": [
+            2,
+            3
+        ],
+        "md-tab-nav-button": [
+            3,
+            4
+        ],
+        "md-tab-icon": "*",
+        "md-tab-label": "*",
+        "md-tabs-indicator": [
+            3,
+            4
+        ],
+        "md-tabs-content": [
+            2,
+            3
+        ],
+        "md-tabs-container": [
+            3,
+            4
+        ],
+        "md-image": [
+            1,
+            2
+        ],
+        "md-subheader": [
+            1,
+            2
+        ],
+        "md-speed-dial": [
+            1,
+            2
+        ],
+        "md-textarea": [
+            1,
+            2
+        ],
+        "md-select": [
+            1,
+            2
+        ],
+        "md-input": "*",
+        "md-select-value": [
+            2,
+            3
+        ],
+        "md-select-menu": "*",
+        "md-input-fake": [
+            2,
+            3
+        ],
+        "md-speed-dial-content": [
+            1,
+            2
+        ],
+        "md-file": [
+            1,
+            2
+        ],
+        "md-file-icon": [
+            2,
+            3
+        ],
+        "md-fab": [
+            1,
+            2
+        ],
+        "md-speed-dial-target": [
+            1,
+            2
+        ],
+        "md-app-toolbar": [
+            1,
+            2
+        ],
+        "md-app": [
+            1,
+            2
+        ],
+        "md-app-side-drawer": [
+            1,
+            2
+        ],
+        "md-layout-row": "*",
+        "md-app-container": [
+            2,
+            3
+        ],
+        "md-flex": "*",
+        "md-layout-column": "*",
+        "md-app-scroller": [
+            3,
+            4
+        ],
+        "md-list-item-text": "*",
+        "md-app-drawer": [
+            1,
+            2
+        ],
+        "md-app-content": [
+            1,
+            2
+        ],
+        "md-optgroup": [
+            1,
+            2
+        ],
+        "md-empty-state": "*",
+        "md-empty-state-container": "*",
+        "md-empty-state-icon": "*",
+        "md-empty-state-label": "*",
+        "md-empty-state-description": "*",
+        "md-card": [
+            1,
+            2
+        ],
+        "md-toolbar": [
+            1,
+            2
+        ],
+        "md-app-internal-drawer": [
+            1,
+            2
+        ],
+        "md-badge": [
+            1,
+            2
+        ],
+        "md-list": [
+            1,
+            2
+        ],
+        "md-card-expand-content": [
+            1,
+            2
+        ],
+        "md-drawer": [
+            1,
+            2
+        ],
+        "md-checkbox": [
+            1,
+            2
+        ],
+        "md-checkbox-container": [
+            2,
+            3
+        ],
+        "md-checkbox-label": [
+            2,
+            3
+        ],
+        "md-avatar": [
+            1,
+            2
+        ],
+        "md-snackbar": "*",
+        "md-snackbar-content": "*",
+        "md-bottom-bar-item": [
+            1,
+            2
+        ],
+        "md-bottom-bar-icon": "*",
+        "md-bottom-bar-label": "*",
+        "md-card-area": [
+            1,
+            2
+        ],
+        "md-list-item-router": [
+            1,
+            2
+        ],
+        "md-overlay": "*",
+        "md-menu": [
+            1,
+            2
+        ],
+        "md-badge-content": [
+            1,
+            2
+        ],
+        "md-card-expand": [
+            1,
+            2
+        ],
+        "md-button-content": "*",
+        "md-bottom-bar": [
+            1,
+            2
+        ],
+        "md-svg-loader": [
+            1,
+            2
+        ],
+        "md-menu-item": [
+            1,
+            2
+        ],
+        "md-switch": [
+            1,
+            2
+        ],
+        "md-switch-container": [
+            2,
+            3
+        ],
+        "md-switch-thumb": [
+            3,
+            4
+        ],
+        "md-switch-label": [
+            2,
+            3
+        ],
+        "md-chips": [
+            1,
+            2
+        ],
+        "md-table-toolbar": [
+            1,
+            2
+        ],
+        "md-transparent": [
+            1,
+            2
+        ],
+        "md-card-media-cover": [
+            1,
+            2
+        ],
+        "md-card-backdrop": [
+            2,
+            3
+        ],
+        "md-card-media": [
+            1,
+            2
+        ],
+        "md-right-previous": [
+            1,
+            2
+        ],
+        "md-list-item-link": [
+            1,
+            2
+        ],
+        "md-progress-spinner": "*",
+        "md-progress-spinner-draw": "*",
+        "md-progress-spinner-circle": "*",
+        "md-list-item-content": [
+            1,
+            2
+        ],
+        "md-date-icon": "*",
+        "md-datepicker-overlay": "*",
+        "md-card-header-text": [
+            1,
+            2
+        ],
+        "md-table-alternate-header": "*",
+        "md-chip": "*",
+        "md-table": [
+            1,
+            2
+        ],
+        "md-table-fixed-header": [
+            2,
+            3
+        ],
+        "md-table-fixed-header-container": [
+            3,
+            4
+        ],
+        "md-table-content": [
+            2,
+            3
+        ],
+        "md-card-media-actions": [
+            1,
+            2
+        ],
+        "md-divider": [
+            1,
+            2
+        ],
+        "md-list-item-button": [
+            1,
+            2
+        ],
+        "md-progress-bar": "*",
+        "md-progress-bar-track": "*",
+        "md-progress-bar-fill": "*",
+        "md-progress-bar-buffer": "*"
+    },
+    "md-table-cell-selection": {
+        "md-table-cell-container": [
+            1
+        ]
+    },
+    "md-table-cell": {
+        "md-table-cell-container": [
+            1
+        ]
+    },
+    "md-dialog": {
+        "md-dialog-container": [
+            2
+        ]
+    },
+    "md-table-head": {
+        "md-table-head-container": [
+            1
+        ],
+        "md-table-head-label": [
+            2
+        ],
+        "md-table-sortable-icon": [
+            3
+        ]
+    },
+    "md-table-head-container": {
+        "md-table-head-label": [
+            1
+        ],
+        "md-table-sortable-icon": [
+            2
+        ]
+    },
+    "md-table-head-label": {
+        "md-table-sortable-icon": [
+            1
+        ]
+    },
+    "md-datepicker-dialog": {
+        "md-datepicker-header": [
+            1
+        ],
+        "md-datepicker-year-select": [
+            2
+        ],
+        "md-datepicker-date-select": [
+            2
+        ],
+        "md-datepicker-dayname": [
+            3
+        ],
+        "md-datepicker-monthname": [
+            3
+        ],
+        "md-datepicker-day": [
+            3,
+            7
+        ],
+        "md-datepicker-body": [
+            1
+        ],
+        "md-datepicker-body-header": [
+            3
+        ],
+        "md-dense": [
+            4,
+            6
+        ],
+        "md-icon-button": [
+            4
+        ],
+        "md-datepicker-body-content": [
+            2
+        ],
+        "md-datepicker-calendar": [
+            4
+        ],
+        "md-datepicker-panel": [
+            4,
+            5
+        ],
+        "md-datepicker-month": [
+            5
+        ],
+        "md-datepicker-month-trigger": [
+            6
+        ],
+        "md-datepicker-week": [
+            6
+        ],
+        "md-datepicker-days": [
+            6
+        ],
+        "md-datepicker-empty": [
+            7
+        ],
+        "md-datepicker-day-button": [
+            8
+        ],
+        "md-datepicker-month-selector": [
+            4
+        ],
+        "md-datepicker-year-trigger": [
+            5
+        ],
+        "md-datepicker-month-button": [
+            5
+        ],
+        "md-datepicker-year-selector": [
+            5
+        ],
+        "md-scrollbar": [
+            5
+        ],
+        "md-datepicker-year-button": [
+            6
+        ],
+        "md-datepicker-body-footer": [
+            2
+        ],
+        "md-primary": [
+            3
+        ]
+    },
+    "md-datepicker-header": {
+        "md-datepicker-year-select": [
+            1
+        ],
+        "md-datepicker-date-select": [
+            1
+        ],
+        "md-datepicker-dayname": [
+            2
+        ],
+        "md-datepicker-monthname": [
+            2
+        ],
+        "md-datepicker-day": [
+            2
+        ]
+    },
+    "md-datepicker-date-select": {
+        "md-datepicker-dayname": [
+            1
+        ],
+        "md-datepicker-monthname": [
+            1
+        ],
+        "md-datepicker-day": [
+            1
+        ]
+    },
+    "md-datepicker-days": {
+        "md-datepicker-day": [
+            1
+        ],
+        "md-datepicker-empty": [
+            1
+        ],
+        "md-datepicker-day-button": [
+            2
+        ]
+    },
+    "md-datepicker-month": {
+        "md-datepicker-day": [
+            2
+        ],
+        "md-datepicker-month-trigger": [
+            1
+        ],
+        "md-dense": [
+            1
+        ],
+        "md-datepicker-week": [
+            1
+        ],
+        "md-datepicker-days": [
+            1
+        ],
+        "md-datepicker-empty": [
+            2
+        ],
+        "md-datepicker-day-button": [
+            3
+        ]
+    },
+    "md-datepicker-panel": {
+        "md-datepicker-day": [
+            2,
+            3
+        ],
+        "md-datepicker-month-trigger": [
+            1,
+            2
+        ],
+        "md-dense": [
+            1,
+            2
+        ],
+        "md-datepicker-week": [
+            1,
+            2
+        ],
+        "md-datepicker-days": [
+            1,
+            2
+        ],
+        "md-datepicker-empty": [
+            2,
+            3
+        ],
+        "md-datepicker-day-button": [
+            3,
+            4
+        ],
+        "md-datepicker-month": [
+            1
+        ],
+        "md-datepicker-panel": [
+            1
+        ],
+        "md-datepicker-year-trigger": [
+            1
+        ],
+        "md-datepicker-month-button": [
+            1
+        ],
+        "md-datepicker-year-button": [
+            1
+        ]
+    },
+    "md-datepicker-calendar": {
+        "md-datepicker-day": [
+            3
+        ],
+        "md-datepicker-month": [
+            1
+        ],
+        "md-datepicker-panel": [
+            1
+        ],
+        "md-datepicker-month-trigger": [
+            2
+        ],
+        "md-dense": [
+            2
+        ],
+        "md-datepicker-week": [
+            2
+        ],
+        "md-datepicker-days": [
+            2
+        ],
+        "md-datepicker-empty": [
+            3
+        ],
+        "md-datepicker-day-button": [
+            4
+        ]
+    },
+    "md-datepicker-body-content": {
+        "md-datepicker-day": [
+            5
+        ],
+        "md-datepicker-calendar": [
+            2
+        ],
+        "md-datepicker-panel": [
+            2,
+            3
+        ],
+        "md-datepicker-month": [
+            3
+        ],
+        "md-datepicker-month-trigger": [
+            4
+        ],
+        "md-dense": [
+            4
+        ],
+        "md-datepicker-week": [
+            4
+        ],
+        "md-datepicker-days": [
+            4
+        ],
+        "md-datepicker-empty": [
+            5
+        ],
+        "md-datepicker-day-button": [
+            6
+        ],
+        "md-datepicker-month-selector": [
+            2
+        ],
+        "md-datepicker-year-trigger": [
+            3
+        ],
+        "md-datepicker-month-button": [
+            3
+        ],
+        "md-datepicker-year-selector": [
+            3
+        ],
+        "md-scrollbar": [
+            3
+        ],
+        "md-datepicker-year-button": [
+            4
+        ]
+    },
+    "md-datepicker-body": {
+        "md-datepicker-day": [
+            6
+        ],
+        "md-datepicker-body-header": [
+            2
+        ],
+        "md-dense": [
+            3,
+            5
+        ],
+        "md-icon-button": [
+            3
+        ],
+        "md-datepicker-body-content": [
+            1
+        ],
+        "md-datepicker-calendar": [
+            3
+        ],
+        "md-datepicker-panel": [
+            3,
+            4
+        ],
+        "md-datepicker-month": [
+            4
+        ],
+        "md-datepicker-month-trigger": [
+            5
+        ],
+        "md-datepicker-week": [
+            5
+        ],
+        "md-datepicker-days": [
+            5
+        ],
+        "md-datepicker-empty": [
+            6
+        ],
+        "md-datepicker-day-button": [
+            7
+        ],
+        "md-datepicker-month-selector": [
+            3
+        ],
+        "md-datepicker-year-trigger": [
+            4
+        ],
+        "md-datepicker-month-button": [
+            4
+        ],
+        "md-datepicker-year-selector": [
+            4
+        ],
+        "md-scrollbar": [
+            4
+        ],
+        "md-datepicker-year-button": [
+            5
+        ],
+        "md-datepicker-body-footer": [
+            1
+        ],
+        "md-primary": [
+            2
+        ]
+    },
+    "md-datepicker-body-header": {
+        "md-dense": [
+            1
+        ],
+        "md-icon-button": [
+            1
+        ]
+    },
+    "md-datepicker-day": {
+        "md-datepicker-day-button": [
+            1
+        ]
+    },
+    "md-datepicker-month-selector": {
+        "md-datepicker-year-trigger": [
+            1
+        ],
+        "md-datepicker-month-button": [
+            1
+        ]
+    },
+    "md-datepicker-year-selector": {
+        "md-datepicker-year-button": [
+            1
+        ]
+    },
+    "md-scrollbar": {
+        "md-datepicker-year-button": [
+            1
+        ]
+    },
+    "md-datepicker-body-footer": {
+        "md-primary": [
+            1
+        ]
+    },
+    "md-list-item-expand": {
+        "md-list-expand-icon": [
+            2
+        ],
+        "md-list-expand": [
+            1
+        ]
+    },
+    "md-autocomplete": {
+        "md-autocomplete-loading": [
+            3
+        ],
+        "md-autocomplete-items": [
+            3
+        ],
+        "md-autocomplete-empty": [
+            4
+        ]
+    },
+    "md-table-pagination": {
+        "md-table-pagination-label": [
+            2
+        ],
+        "md-icon-button": [
+            1
+        ],
+        "md-table-pagination-previous": [
+            1
+        ],
+        "md-table-pagination-next": [
+            1
+        ]
+    },
+    "md-radio": {
+        "md-radio-container": [
+            1
+        ],
+        "md-radio-label": [
+            1
+        ]
+    },
+    "md-stepper": {
+        "md-stepper-content": [
+            1
+        ]
+    },
+    "md-stepper-header": {
+        "md-stepper-icon": [
+            1
+        ],
+        "md-stepper-number": [
+            1
+        ],
+        "md-stepper-editable": [
+            2
+        ],
+        "md-stepper-done": [
+            2
+        ],
+        "md-stepper-text": [
+            1
+        ],
+        "md-stepper-label": [
+            2
+        ],
+        "md-stepper-error": [
+            2
+        ],
+        "md-stepper-description": [
+            2
+        ]
+    },
+    "md-stepper-number": {
+        "md-stepper-editable": [
+            1
+        ],
+        "md-stepper-done": [
+            1
+        ]
+    },
+    "md-stepper-text": {
+        "md-stepper-label": [
+            1
+        ],
+        "md-stepper-error": [
+            1
+        ],
+        "md-stepper-description": [
+            1
+        ]
+    },
+    "md-steppers": {
+        "md-steppers-navigation": [
+            1
+        ],
+        "md-steppers-wrapper": [
+            1
+        ],
+        "md-steppers-container": [
+            2
+        ]
+    },
+    "md-steppers-wrapper": {
+        "md-steppers-container": [
+            1
+        ]
+    },
+    "md-field": {
+        "md-count": [
+            1
+        ],
+        "md-clear": [
+            2
+        ],
+        "md-dense": [
+            2
+        ],
+        "md-icon-button": [
+            2
+        ],
+        "md-input-action": [
+            2
+        ],
+        "md-toggle-password": [
+            2
+        ]
+    },
+    "md-chip": {
+        "md-clear": [
+            2
+        ],
+        "md-dense": [
+            2
+        ],
+        "md-icon-button": [
+            2
+        ],
+        "md-input-action": [
+            2
+        ]
+    },
+    "md-tabs": {
+        "md-tabs-navigation": [
+            1
+        ],
+        "md-tab-nav-button": [
+            2
+        ],
+        "md-tab-icon": [
+            5
+        ],
+        "md-tab-label": [
+            5
+        ],
+        "md-tabs-indicator": [
+            2
+        ],
+        "md-tabs-content": [
+            1
+        ],
+        "md-tabs-container": [
+            2
+        ]
+    },
+    "md-tabs-navigation": {
+        "md-tab-nav-button": [
+            1
+        ],
+        "md-tab-icon": [
+            4
+        ],
+        "md-tab-label": [
+            4
+        ],
+        "md-tabs-indicator": [
+            1
+        ]
+    },
+    "md-tab-nav-button": {
+        "md-tab-icon": [
+            3
+        ],
+        "md-tab-label": [
+            3
+        ]
+    },
+    "md-tabs-content": {
+        "md-tabs-container": [
+            1
+        ]
+    },
+    "md-select": {
+        "md-input": [
+            1
+        ],
+        "md-select-value": [
+            1
+        ],
+        "md-select-menu": [
+            2
+        ],
+        "md-input-fake": [
+            1
+        ]
+    },
+    "md-file": {
+        "md-file-icon": [
+            1
+        ],
+        "md-input": [
+            1
+        ]
+    },
+    "md-app": {
+        "md-app-container": [
+            1
+        ],
+        "md-flex": [
+            1,
+            2
+        ],
+        "md-layout-column": [
+            1,
+            2
+        ],
+        "md-app-scroller": [
+            2
+        ],
+        "md-layout-row": [
+            1
+        ]
+    },
+    "md-app-side-drawer": {
+        "md-app-container": [
+            1
+        ],
+        "md-flex": [
+            1,
+            2
+        ],
+        "md-layout-column": [
+            1,
+            2
+        ],
+        "md-app-scroller": [
+            2
+        ]
+    },
+    "md-layout-row": {
+        "md-app-container": [
+            1
+        ],
+        "md-flex": [
+            1,
+            2
+        ],
+        "md-layout-column": [
+            1,
+            2
+        ],
+        "md-app-scroller": [
+            1,
+            2
+        ]
+    },
+    "md-app-container": {
+        "md-app-scroller": [
+            1
+        ],
+        "md-flex": [
+            1
+        ],
+        "md-layout-column": [
+            1
+        ]
+    },
+    "md-flex": {
+        "md-app-scroller": [
+            1
+        ],
+        "md-flex": [
+            1
+        ],
+        "md-layout-column": [
+            1
+        ]
+    },
+    "md-layout-column": {
+        "md-app-scroller": [
+            1,
+            2
+        ],
+        "md-flex": [
+            1,
+            2
+        ],
+        "md-layout-column": [
+            1,
+            2
+        ],
+        "md-app-container": [
+            1
+        ],
+        "md-layout-row": [
+            1
+        ]
+    },
+    "md-app-internal-drawer": {
+        "md-app-scroller": [
+            2
+        ],
+        "md-flex": [
+            1,
+            2
+        ],
+        "md-layout-column": [
+            2
+        ],
+        "md-app-container": [
+            1
+        ],
+        "md-layout-row": [
+            1
+        ]
+    },
+    "md-empty-state": {
+        "md-empty-state-container": [
+            1
+        ],
+        "md-empty-state-icon": [
+            3
+        ],
+        "md-empty-state-label": [
+            2
+        ],
+        "md-empty-state-description": [
+            2
+        ]
+    },
+    "md-empty-state-container": {
+        "md-empty-state-icon": [
+            2
+        ],
+        "md-empty-state-label": [
+            1
+        ],
+        "md-empty-state-description": [
+            1
+        ]
+    },
+    "md-checkbox": {
+        "md-checkbox-container": [
+            1
+        ],
+        "md-checkbox-label": [
+            1
+        ]
+    },
+    "md-snackbar": {
+        "md-snackbar-content": [
+            1
+        ]
+    },
+    "md-bottom-bar-item": {
+        "md-bottom-bar-icon": [
+            2
+        ],
+        "md-bottom-bar-label": [
+            2
+        ]
+    },
+    "md-switch": {
+        "md-switch-container": [
+            1
+        ],
+        "md-switch-thumb": [
+            2
+        ],
+        "md-switch-label": [
+            1
+        ]
+    },
+    "md-switch-container": {
+        "md-switch-thumb": [
+            1
+        ]
+    },
+    "md-card-media-cover": {
+        "md-card-backdrop": [
+            1
+        ]
+    },
+    "md-progress-spinner": {
+        "md-progress-spinner-draw": [
+            1
+        ],
+        "md-progress-spinner-circle": [
+            2
+        ]
+    },
+    "md-progress-spinner-draw": {
+        "md-progress-spinner-circle": [
+            1
+        ]
+    },
+    "md-table": {
+        "md-table-fixed-header": [
+            1
+        ],
+        "md-table-fixed-header-container": [
+            2
+        ],
+        "md-scrollbar": [
+            1
+        ],
+        "md-table-content": [
+            1
+        ]
+    },
+    "md-table-fixed-header": {
+        "md-table-fixed-header-container": [
+            1
+        ]
+    },
+    "md-progress-bar": {
+        "md-progress-bar-track": [
+            1
+        ],
+        "md-progress-bar-fill": [
+            1
+        ],
+        "md-progress-bar-buffer": [
+            1
+        ]
+    }
+}

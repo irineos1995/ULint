@@ -1,0 +1,966 @@
+{
+    "()": {
+        "md-card-signup": [
+            1,
+            2
+        ],
+        "md-layout": "*",
+        "pagination": [
+            1,
+            2
+        ],
+        "page-item": [
+            2,
+            3
+        ],
+        "prev-page": [
+            2,
+            3
+        ],
+        "page-link": [
+            3,
+            4
+        ],
+        "fa-angle-double-left": [
+            4,
+            5
+        ],
+        "fas": [
+            4,
+            5
+        ],
+        "next-page": [
+            2,
+            3
+        ],
+        "page-pre": [
+            2,
+            3
+        ],
+        "fa-angle-double-right": [
+            4,
+            5
+        ],
+        "md-card-tabs": [
+            1,
+            2
+        ],
+        "nav-tabs": "*",
+        "tab-content": "*",
+        "md-card-pricing": [
+            1,
+            2
+        ],
+        "md-card-icon": "*",
+        "text-center": "*",
+        "slider": [
+            1,
+            2
+        ],
+        "md-collapse-label": "*",
+        "md-collapse-title": "*",
+        "md-collapse-content": "*",
+        "md-card-testimonial": [
+            1,
+            2
+        ],
+        "icon": [
+            2,
+            3
+        ],
+        "choice": [
+            1,
+            2
+        ],
+        "md-card-global-sales": [
+            1,
+            2
+        ],
+        "md-card-header-icon": [
+            2,
+            3
+        ],
+        "wizard-container": [
+            1,
+            2
+        ],
+        "active": "*",
+        "md-card-wizard": "*",
+        "card-title": "*",
+        "description": "*",
+        "wizard-navigation": "*",
+        "nav": "*",
+        "nav-pills": "*",
+        "nav-item": "*",
+        "wizard-tab-link": "*",
+        "nav-link": "*",
+        "moving-tab": "*",
+        "btn-previous": "*",
+        "btn-next": "*",
+        "md-success": "*",
+        "md-card-product": [
+            1,
+            2
+        ],
+        "animated": [
+            2,
+            3
+        ],
+        "md-card-header-image": [
+            2,
+            3
+        ],
+        "md-card-action-buttons": "*",
+        "fix-broken-card": "*",
+        "md-danger": "*",
+        "md-simple": "*",
+        "md-just-icon": "*",
+        "md-card-stats": [
+            1,
+            2
+        ],
+        "md-card-timeline": [
+            1,
+            2
+        ],
+        "timeline": [
+            2,
+            3
+        ],
+        "notifications": [
+            1,
+            2
+        ],
+        "fade": [
+            1,
+            2
+        ],
+        "tab-pane": [
+            1,
+            2
+        ],
+        "timeline-badge": "*",
+        "timeline-panel": "*",
+        "timeline-heading": "*",
+        "timeline-body": "*",
+        "dropdown-toggle": "*",
+        "notification": "*",
+        "caret": "*",
+        "md-card-chart": [
+            1,
+            2
+        ],
+        "ct-chart": "*",
+        "sidebar": [
+            1,
+            2
+        ],
+        "logo": [
+            2,
+            3
+        ],
+        "logo-mini": [
+            3,
+            4
+        ],
+        "simple-text": [
+            3,
+            4
+        ],
+        "logo-img": [
+            4,
+            5
+        ],
+        "logo-normal": [
+            3,
+            4
+        ],
+        "navbar-minimize": [
+            3,
+            4
+        ],
+        "md-round": [
+            4,
+            5
+        ],
+        "md-transparent": [
+            4,
+            5
+        ],
+        "material-icons": "*",
+        "text_align-center": [
+            5,
+            6
+        ],
+        "visible-on-sidebar-regular": [
+            5,
+            6
+        ],
+        "design_bullet-list-67": [
+            5,
+            6
+        ],
+        "visible-on-sidebar-mini": [
+            5,
+            6
+        ],
+        "sidebar-wrapper": [
+            2,
+            3
+        ],
+        "md-card-login": [
+            1,
+            2
+        ],
+        "social-line": "*",
+        "badge": [
+            1,
+            2
+        ],
+        "alert": [
+            1,
+            2
+        ],
+        "alert-with-icon": [
+            1,
+            2
+        ],
+        "open": [
+            1,
+            2
+        ],
+        "close": [
+            2,
+            3
+        ],
+        "sidebar-menu-item": "*",
+        "sidebar-mini": "*",
+        "sidebar-normal": "*",
+        "md-card-nav-tabs": [
+            1,
+            2
+        ],
+        "modal-mask": "*",
+        "modal-wrapper": "*",
+        "modal-container": "*",
+        "modal-header": "*",
+        "modal-body": "*",
+        "modal-footer": "*",
+        "md-table-global-sales": "*",
+        "flag": "*",
+        "md-card-profile": [
+            1,
+            2
+        ],
+        "md-card-avatar": "*"
+    },
+    "md-card-signup": {
+        "md-layout": [
+            2
+        ]
+    },
+    "pagination": {
+        "page-item": [
+            1
+        ],
+        "prev-page": [
+            1
+        ],
+        "page-link": [
+            2
+        ],
+        "fa-angle-double-left": [
+            3
+        ],
+        "fas": [
+            3
+        ],
+        "next-page": [
+            1
+        ],
+        "page-pre": [
+            1
+        ],
+        "fa-angle-double-right": [
+            3
+        ]
+    },
+    "page-item": {
+        "page-link": [
+            1
+        ],
+        "fa-angle-double-left": [
+            2
+        ],
+        "fas": [
+            2
+        ],
+        "fa-angle-double-right": [
+            2
+        ]
+    },
+    "prev-page": {
+        "page-link": [
+            1
+        ],
+        "fa-angle-double-left": [
+            2
+        ],
+        "fas": [
+            2
+        ]
+    },
+    "next-page": {
+        "page-link": [
+            1
+        ],
+        "fa-angle-double-right": [
+            2
+        ],
+        "fas": [
+            2
+        ]
+    },
+    "page-pre": {
+        "page-link": [
+            1
+        ],
+        "fa-angle-double-right": [
+            2
+        ],
+        "fas": [
+            2
+        ]
+    },
+    "page-link": {
+        "fa-angle-double-left": [
+            1
+        ],
+        "fas": [
+            1
+        ],
+        "fa-angle-double-right": [
+            1
+        ]
+    },
+    "md-card-tabs": {
+        "nav-tabs": [
+            2
+        ],
+        "tab-content": [
+            3
+        ]
+    },
+    "active": {
+        "tab-content": [
+            2
+        ],
+        "card-title": [
+            3
+        ],
+        "description": [
+            3
+        ],
+        "wizard-navigation": [
+            1
+        ],
+        "nav": [
+            2
+        ],
+        "nav-pills": [
+            2
+        ],
+        "nav-item": [
+            3
+        ],
+        "wizard-tab-link": [
+            3
+        ],
+        "nav-link": [
+            4
+        ],
+        "moving-tab": [
+            2
+        ],
+        "btn-previous": [
+            4
+        ],
+        "btn-next": [
+            4
+        ],
+        "md-success": [
+            4
+        ]
+    },
+    "md-card-wizard": {
+        "tab-content": [
+            2
+        ],
+        "card-title": [
+            3
+        ],
+        "description": [
+            3
+        ],
+        "wizard-navigation": [
+            1
+        ],
+        "nav": [
+            2
+        ],
+        "nav-pills": [
+            2
+        ],
+        "nav-item": [
+            3
+        ],
+        "wizard-tab-link": [
+            3
+        ],
+        "nav-link": [
+            4
+        ],
+        "moving-tab": [
+            2
+        ],
+        "btn-previous": [
+            4
+        ],
+        "btn-next": [
+            4
+        ],
+        "md-success": [
+            4
+        ]
+    },
+    "wizard-container": {
+        "tab-content": [
+            4
+        ],
+        "active": [
+            2
+        ],
+        "md-card-wizard": [
+            2
+        ],
+        "card-title": [
+            5
+        ],
+        "description": [
+            5
+        ],
+        "wizard-navigation": [
+            3
+        ],
+        "nav": [
+            4
+        ],
+        "nav-pills": [
+            4
+        ],
+        "nav-item": [
+            5
+        ],
+        "wizard-tab-link": [
+            5
+        ],
+        "nav-link": [
+            6
+        ],
+        "moving-tab": [
+            4
+        ],
+        "btn-previous": [
+            6
+        ],
+        "btn-next": [
+            6
+        ],
+        "md-success": [
+            6
+        ]
+    },
+    "md-card-pricing": {
+        "md-card-icon": [
+            2
+        ],
+        "text-center": [
+            1
+        ]
+    },
+    "md-collapse-label": {
+        "md-collapse-title": [
+            1
+        ]
+    },
+    "md-card-testimonial": {
+        "icon": [
+            1
+        ]
+    },
+    "choice": {
+        "icon": [
+            1
+        ]
+    },
+    "md-card-global-sales": {
+        "md-card-header-icon": [
+            1
+        ]
+    },
+    "md-card-stats": {
+        "md-card-header-icon": [
+            1
+        ]
+    },
+    "wizard-navigation": {
+        "nav": [
+            1
+        ],
+        "nav-pills": [
+            1
+        ],
+        "nav-item": [
+            2
+        ],
+        "wizard-tab-link": [
+            2
+        ],
+        "nav-link": [
+            3
+        ],
+        "moving-tab": [
+            1
+        ]
+    },
+    "nav": {
+        "nav-item": [
+            1
+        ],
+        "wizard-tab-link": [
+            1
+        ],
+        "nav-link": [
+            2
+        ]
+    },
+    "nav-pills": {
+        "nav-item": [
+            1
+        ],
+        "wizard-tab-link": [
+            1
+        ],
+        "nav-link": [
+            2
+        ]
+    },
+    "nav-item": {
+        "nav-link": [
+            1
+        ]
+    },
+    "wizard-tab-link": {
+        "nav-link": [
+            1
+        ]
+    },
+    "md-card-product": {
+        "animated": [
+            1
+        ],
+        "md-card-header-image": [
+            1
+        ],
+        "md-card-action-buttons": [
+            2
+        ],
+        "text-center": [
+            2
+        ],
+        "fix-broken-card": [
+            3
+        ],
+        "md-danger": [
+            3
+        ],
+        "md-simple": [
+            3
+        ],
+        "md-just-icon": [
+            3
+        ],
+        "md-success": [
+            3
+        ]
+    },
+    "md-card-chart": {
+        "md-card-action-buttons": [
+            2
+        ],
+        "text-center": [
+            2
+        ],
+        "fix-broken-card": [
+            3
+        ],
+        "md-danger": [
+            3
+        ],
+        "md-simple": [
+            3
+        ],
+        "ct-chart": [
+            2
+        ]
+    },
+    "md-card-action-buttons": {
+        "fix-broken-card": [
+            1
+        ],
+        "md-danger": [
+            1
+        ],
+        "md-simple": [
+            1
+        ],
+        "md-just-icon": [
+            1
+        ],
+        "md-success": [
+            1
+        ]
+    },
+    "text-center": {
+        "fix-broken-card": [
+            1
+        ],
+        "md-danger": [
+            1
+        ],
+        "md-simple": [
+            1
+        ],
+        "md-just-icon": [
+            1
+        ],
+        "md-success": [
+            1
+        ]
+    },
+    "md-card-timeline": {
+        "timeline": [
+            1
+        ]
+    },
+    "timeline-panel": {
+        "timeline-heading": [
+            1
+        ],
+        "timeline-body": [
+            1
+        ]
+    },
+    "dropdown-toggle": {
+        "notification": [
+            1
+        ],
+        "caret": [
+            2
+        ]
+    },
+    "notification": {
+        "caret": [
+            1
+        ]
+    },
+    "nav-link": {
+        "caret": [
+            2
+        ],
+        "sidebar-mini": [
+            2
+        ],
+        "sidebar-normal": [
+            2
+        ]
+    },
+    "sidebar-menu-item": {
+        "caret": [
+            2
+        ]
+    },
+    "sidebar": {
+        "logo": [
+            1
+        ],
+        "logo-mini": [
+            2
+        ],
+        "simple-text": [
+            2
+        ],
+        "logo-img": [
+            3
+        ],
+        "logo-normal": [
+            2
+        ],
+        "navbar-minimize": [
+            2
+        ],
+        "md-just-icon": [
+            3
+        ],
+        "md-round": [
+            3
+        ],
+        "md-transparent": [
+            3
+        ],
+        "material-icons": [
+            4
+        ],
+        "text_align-center": [
+            4
+        ],
+        "visible-on-sidebar-regular": [
+            4
+        ],
+        "design_bullet-list-67": [
+            4
+        ],
+        "visible-on-sidebar-mini": [
+            4
+        ],
+        "sidebar-wrapper": [
+            1
+        ],
+        "nav": [
+            2
+        ]
+    },
+    "logo": {
+        "logo-mini": [
+            1
+        ],
+        "simple-text": [
+            1
+        ],
+        "logo-img": [
+            2
+        ],
+        "logo-normal": [
+            1
+        ],
+        "navbar-minimize": [
+            1
+        ],
+        "md-just-icon": [
+            2
+        ],
+        "md-round": [
+            2
+        ],
+        "md-transparent": [
+            2
+        ],
+        "material-icons": [
+            3
+        ],
+        "text_align-center": [
+            3
+        ],
+        "visible-on-sidebar-regular": [
+            3
+        ],
+        "design_bullet-list-67": [
+            3
+        ],
+        "visible-on-sidebar-mini": [
+            3
+        ]
+    },
+    "logo-mini": {
+        "logo-img": [
+            1
+        ]
+    },
+    "simple-text": {
+        "logo-img": [
+            1
+        ]
+    },
+    "navbar-minimize": {
+        "md-just-icon": [
+            1
+        ],
+        "md-round": [
+            1
+        ],
+        "md-transparent": [
+            1
+        ],
+        "material-icons": [
+            2
+        ],
+        "text_align-center": [
+            2
+        ],
+        "visible-on-sidebar-regular": [
+            2
+        ],
+        "design_bullet-list-67": [
+            2
+        ],
+        "visible-on-sidebar-mini": [
+            2
+        ]
+    },
+    "md-just-icon": {
+        "material-icons": [
+            1
+        ],
+        "text_align-center": [
+            1
+        ],
+        "visible-on-sidebar-regular": [
+            1
+        ],
+        "design_bullet-list-67": [
+            1
+        ],
+        "visible-on-sidebar-mini": [
+            1
+        ]
+    },
+    "md-round": {
+        "material-icons": [
+            1
+        ],
+        "text_align-center": [
+            1
+        ],
+        "visible-on-sidebar-regular": [
+            1
+        ],
+        "design_bullet-list-67": [
+            1
+        ],
+        "visible-on-sidebar-mini": [
+            1
+        ]
+    },
+    "md-transparent": {
+        "material-icons": [
+            1
+        ],
+        "text_align-center": [
+            1
+        ],
+        "visible-on-sidebar-regular": [
+            1
+        ],
+        "design_bullet-list-67": [
+            1
+        ],
+        "visible-on-sidebar-mini": [
+            1
+        ]
+    },
+    "sidebar-wrapper": {
+        "nav": [
+            1
+        ]
+    },
+    "md-card-login": {
+        "social-line": [
+            2
+        ]
+    },
+    "alert": {
+        "close": [
+            1
+        ],
+        "material-icons": [
+            1
+        ]
+    },
+    "alert-with-icon": {
+        "close": [
+            1
+        ],
+        "material-icons": [
+            1
+        ]
+    },
+    "open": {
+        "close": [
+            1
+        ],
+        "material-icons": [
+            1
+        ]
+    },
+    "modal-mask": {
+        "modal-wrapper": [
+            1
+        ],
+        "modal-container": [
+            2
+        ],
+        "modal-header": [
+            3
+        ],
+        "modal-body": [
+            3
+        ],
+        "text-center": [
+            3
+        ],
+        "modal-footer": [
+            3
+        ]
+    },
+    "modal-wrapper": {
+        "modal-container": [
+            1
+        ],
+        "modal-header": [
+            2
+        ],
+        "modal-body": [
+            2
+        ],
+        "text-center": [
+            2
+        ],
+        "modal-footer": [
+            2
+        ]
+    },
+    "modal-container": {
+        "modal-header": [
+            1
+        ],
+        "modal-body": [
+            1
+        ],
+        "text-center": [
+            1
+        ],
+        "modal-footer": [
+            1
+        ]
+    },
+    "md-table-global-sales": {
+        "flag": [
+            3
+        ]
+    },
+    "md-card-profile": {
+        "md-card-avatar": [
+            2
+        ]
+    }
+}
