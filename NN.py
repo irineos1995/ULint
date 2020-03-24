@@ -152,7 +152,7 @@ class NeuralNetwork():
             if not parent_value or not child_value:
                 return
 
-            error = 'Error in line {} ---> Parent: {} has no relation to child: {} at depth: {}. correct?'.format(
+            error = 'Error in line {} ---> Parent: {} has not been trained to have a relation to child: {} at depth: {}. correct?'.format(
                 colored(lst[0], 'red'), colored(lst[1], 'blue'), colored(lst[2], 'blue'), colored(lst[3], 'red'))
             if not random_or_manual or 'ma' in random_or_manual.lower():
                 input_answer = input(error)
