@@ -4,6 +4,7 @@ from termcolor import colored, cprint
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
+import json
 
 from main import *
 
@@ -204,42 +205,52 @@ class TestScenario11(unittest.TestCase):
 
     def test_memory_footprint_25_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=25)
+        print('Total training elements for 25 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_50_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=50)
+        print('Total training elements for 50 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_75_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=75)
+        print('Total training elements for 75 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_100_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=100)
+        print('Total training elements for 100 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_125_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=125)
+        print('Total training elements for 125 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_150_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=150)
+        print('Total training elements for 150 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_175_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=175)
+        print('Total training elements for 175 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_200_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=200)
+        print('Total training elements for 200 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_225_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=225)
+        print('Total training elements for 225 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
     def test_memory_footprint_233_pages(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=233)
+        print('Total training elements for 233 pages: {}'.format(rule_composer_class.get_total_training_elements()))
         self.assertEqual([], [])
 
 class TestScenario12(unittest.TestCase):
@@ -308,7 +319,7 @@ class TestScenario15(unittest.TestCase):
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
-                                              depth_cap=2,
+                                              depth_cap=None,
                                               parent_level_errors=True
                                               )
 
@@ -318,6 +329,7 @@ class TestScenario15(unittest.TestCase):
         set_of_errors = set(errors)
         print(set_of_errors)
         print(len(set_of_errors))
+        cprint(rule_composer_class.depth_of_errors_report())
 
         self.assertFalse(365 in set_of_errors)
 
@@ -340,3 +352,151 @@ class TestScenario16(unittest.TestCase):
         cprint(rule_composer_class.depth_of_errors_report())
 
         self.assertFalse(False)
+
+class TestScenario17(unittest.TestCase):
+    def test_relation_cap(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True)
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=None,
+                                              parent_level_errors=True,
+                                              relation_cap=None
+                                              )
+
+        rule_composer_class.print_parent_level_errors()
+        errors = rule_composer_class.get_line_number_errors()
+
+        set_of_errors = set(errors)
+        print(set_of_errors)
+        print(len(set_of_errors))
+        cprint(rule_composer_class.depth_of_errors_report())
+
+        # self.assertFalse(507 in set_of_errors)
+
+class TestScenario18(unittest.TestCase):
+    def test_linting_time(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=1, debug=False, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=1,
+                                              parent_level_errors=True,
+                                              relation_cap=6
+                                              )
+
+        rule_composer_class.print_parent_level_errors()
+        errors = rule_composer_class.get_line_number_errors()
+        print(len(errors))
+        # set_of_errors = set(errors)
+        # print(set_of_errors)
+        # print(len(set_of_errors))
+        # cprint(rule_composer_class.depth_of_errors_report())
+
+        # self.assertFalse(507 in set_of_errors)
+
+class TestScenario19(unittest.TestCase):
+    def test_data_dump(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
+        rule_composer_class.dump_rules(filename="rules.json")
+
+        fine_relations = rule_composer_class.construct_fine_relations()
+        with open('rules.json') as json_file:
+            rules = json.load(json_file)
+        self.assertEqual(fine_relations, rules)
+
+    def test_data_load(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class.compare_test_page(
+            test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+            allow_fine_grain_relations=True,
+            ignore_unseen_classes=True,
+            include_warnings=False,
+            depth_cap=1,
+            parent_level_errors=True,
+            relation_cap=10
+            )
+
+        errors = rule_composer_class.get_line_number_errors()
+
+        rule_composer_class_2 = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
+        rule_composer_class_2.compare_test_page(
+            test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+            allow_fine_grain_relations=True,
+            ignore_unseen_classes=True,
+            include_warnings=False,
+            depth_cap=1,
+            parent_level_errors=True,
+            relation_cap=10
+        )
+
+        errors_2 = rule_composer_class.get_line_number_errors()
+
+        self.assertEqual(errors, errors_2)
+
+class TestScenario20(unittest.TestCase):
+    def test_proving_bootlint_wrong(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        # rule_composer_class.dump_rules(filename="rules.json")
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_13/test.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=1,
+                                              parent_level_errors=True,
+                                              relation_cap=10
+                                              )
+
+        rule_composer_class.print_parent_level_errors()
+        errors = rule_composer_class.get_line_number_errors()
+        print(len(errors))
+
+class TestScenario21(unittest.TestCase):
+    def test_training_with_vue_framework(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='vue-material-training_v2/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="rules_vue.json")
+        # rule_composer_class.dump_rules(filename="rules_vue.json")
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_14/test.vue',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=6,
+                                              parent_level_errors=True,
+                                              relation_cap=None
+                                              )
+        rule_composer_class.print_parent_level_errors()
+
+class TestScenario20(unittest.TestCase):
+    def test_UI(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        # rule_composer_class.dump_rules(filename="rules.json")
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=1,
+                                              parent_level_errors=True,
+                                              relation_cap=10
+                                              )
+
+        errors = rule_composer_class.print_parent_level_errors()
+        rule_composer_class.present_errors(errors, rules_filename="rules.json", star_depth_threshold=3)
+
+    def test_actual_stuff(self):
+        # rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop', star_depth_threshold=3, debug=True, max_training_pages=50, json_rules_filename="foundation_official_rules_150_pages.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop/training-pages',
+                                           star_depth_threshold=3, debug=True, max_training_pages=1050)
+        # rule_composer_class.dump_rules(filename="foundation_official_rules_150_pages.json")
+        # rule_composer_class.compare_test_page(test_page='frameworks-examples/foundation-sites-develop/test-pages/docker.html',
+        #                                       allow_fine_grain_relations=True,
+        #                                       ignore_unseen_classes=True,
+        #                                       include_warnings=False,
+        #                                       depth_cap=1,
+        #                                       parent_level_errors=True,
+        #                                       relation_cap=None
+        #                                       )
+
+        errors = rule_composer_class.print_parent_level_errors()
+        print('Total test elements: {}'.format(rule_composer_class.get_total_test_elements()))
+        print('Total train elements: {}'.format(rule_composer_class.get_total_training_elements()))
