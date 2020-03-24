@@ -1,5 +1,7 @@
 import re
 from termcolor import colored, cprint
+import json
+from dump_encoder import PythonObjectEncoder
 
 class Relations:
     child_parents_dict = {}
@@ -8,13 +10,19 @@ class Relations:
     star_depth_threshold = None
     depths_of_errors = []
     parent_level_errors_dict = {}
+    plain_parent_level_errors_dict = {}
     independent_classes = []
+    global_test_data_parent_children_dict = {}
+    dumped_fine_relations = {}
+    true_positives = 0
+    true_negatives = 0
 
-    def __init__(self, threshold, star_depth_threshold):
+    def __init__(self, threshold, star_depth_threshold, dumped_fine_relations={}):
         self.child_parents_dict = {}
         self.THRESHOLD = threshold
         self.line_number_with_errors = set()
         self.star_depth_threshold = star_depth_threshold
+        self.dumped_fine_relations = dumped_fine_relations
 
         with open('independent_classes', 'r') as rfl:
             self.independent_classes = [line.strip().replace(' ', '') for line in rfl.readlines() if line]
@@ -289,15 +297,27 @@ class Relations:
                     return True
         return False
 
-    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors):
+    def can_parent_can_contain_any_class(self, parent, relation_cap):
+        if parent not in self.global_test_data_parent_children_dict:
+            return False
+        else:
+            if len(self.global_test_data_parent_children_dict[parent]) > relation_cap:
+                # print('parent {} : children{}\n'.format(parent, self.global_test_data_parent_children_dict[parent]))
+                return True
+
+    def compare_child_with_parents_list_fine_relations(self, child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap):
         combined_errors = []
         neural_network_list = [] # [[sourceLine, parent, child, depth], [sourceLine, parent, child, depth]]
         fine_relations = self.construct_fine_relations()
         parent_classes = [i for i in fine_relations.keys()]
 
-        child_unprocessed_dicts = [i.keys() for i in fine_relations.values()]
-        child_classes = [key for key in child_unprocessed_dicts]
 
+        child_unprocessed_dicts = [i.keys() for i in fine_relations.values()]
+        child_classes_lists = [list(key) for key in child_unprocessed_dicts]
+        child_classes = []
+        for lst in child_classes_lists:
+            for key in lst:
+                child_classes.append(key)
 
         for ccls in child_tuple:
             # if not self.seen_class(ccls) and ignore_unseen_classes:
@@ -308,11 +328,15 @@ class Relations:
                 depth += 1
                 for cls in parent:
                     if cls in self.independent_classes or ccls in self.independent_classes:
+                        self.true_negatives += 1
                         continue
-                    if cls not in parent_classes and ccls not in child_classes: # BUG HERE
+                    if relation_cap and self.can_parent_can_contain_any_class(cls, relation_cap):
+                        self.true_negatives += 1
+                        continue
+                    if cls not in parent_classes or ccls not in child_classes: # BUG HERE
                         if ignore_unseen_classes:
                             if include_warnings:
-                                warning = 'Warning in line {} ---> Parent: {} has no relation to child: {}'.format(
+                                warning = 'Warning in line {} ---> Parent: {} has not been trained to have a relation to child: {}'.format(
                                     colored(source_line, 'magenta'), colored(cls, 'blue'), colored(ccls, 'blue'))
                                 self.depths_of_errors.append(depth)
                                 combined_errors.append(warning)
@@ -320,39 +344,59 @@ class Relations:
                         if parent_level_errors and parent_line_numbers:
                             if parent_line_number not in self.parent_level_errors_dict:
                                 self.parent_level_errors_dict[parent_line_number] = [
-                                    '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                    '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}'.format(
                                         colored(cls, 'blue',),
                                         colored(ccls, 'blue'),
                                         colored(source_line, 'cyan'),
                                         colored(depth, 'red')
                                     )
                                 ]
+                                self.plain_parent_level_errors_dict[parent_line_number] = [
+                                    '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}'.format(
+                                        cls,
+                                        ccls,
+                                        source_line,
+                                        depth,
+                                    )
+                                ]
+                                self.true_positives += 1
                             else:
                                 self.parent_level_errors_dict[parent_line_number].append(
-                                    '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                    '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}'.format(
                                         colored(cls, 'blue', ),
                                         colored(ccls, 'blue'),
                                         colored(source_line, 'cyan'),
                                         colored(depth, 'red')
                                     )
                                 )
+                                self.plain_parent_level_errors_dict[parent_line_number].append(
+                                    '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}'.format(
+                                        cls,
+                                        ccls,
+                                        source_line,
+                                        depth,
+                                    )
+                                )
+                                self.true_positives += 1
 
-                        error = 'Error in line {} ---> Parent: {} at line: {} has no relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(parent_line_number, 'cyan'), colored(ccls, 'blue'))
+                        error = 'Error in line {} ---> Parent: {} at line: {} has not been trained to have a relation to child: {}'.format(colored(source_line, 'red'), colored(cls, 'blue'), colored(parent_line_number, 'cyan'), colored(ccls, 'blue'))
                         # print(error)
                         # return False, error
                         self.depths_of_errors.append(depth)
                         combined_errors.append(error)
                     else:
                         if depth_cap and depth > depth_cap:
+                            self.true_negatives += 1
                             continue
                         if fine_relations.get(cls, {}).get(ccls, {}) == "*":
                             # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {} because depth = "*"'.format(
                             #         source_line, cls,
                             #         ccls, depth))
+                            self.true_negatives += 1
                             pass
                         else:
                             if depth not in fine_relations.get(cls, {}).get(ccls, {}):
-                                error = 'Error in line {} ---> Parent: {} at line: {} has no relation to child: {} at depth: {}. Depths encountered: {}'.format(
+                                error = 'Error in line {} ---> Parent: {} at line: {} has not been trained to have a relation to child: {} at depth: {}. Depths encountered: {}'.format(
                                     colored(source_line, 'red'), colored(cls, 'blue'), colored(parent_line_number, 'cyan'), colored(ccls, 'blue'), colored(depth, 'red'), colored(fine_relations.get(cls, {}).get(ccls, {}), 'green'))
                                 # print(error)
                                 self.depths_of_errors.append(depth)
@@ -366,27 +410,51 @@ class Relations:
                                 if parent_level_errors and parent_line_numbers:
                                     if parent_line_number not in self.parent_level_errors_dict:
                                         self.parent_level_errors_dict[parent_line_number] = [
-                                            '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                            '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}. Depths encountered during training: {}'.format(
                                                 colored(cls, 'blue', ),
                                                 colored(ccls, 'blue'),
                                                 colored(source_line, 'cyan'),
-                                                colored(depth, 'red')
+                                                colored(depth, 'red'),
+                                                colored(fine_relations.get(cls, {}).get(ccls, None), 'yellow')
                                             )
                                         ]
+                                        self.plain_parent_level_errors_dict[parent_line_number] = [
+                                            '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}. Depths encountered during training: {}'.format(
+                                                cls,
+                                                ccls,
+                                                source_line,
+                                                depth,
+                                                fine_relations.get(cls, {}).get(ccls, None)
+                                            )
+                                        ]
+                                        self.true_positives += 1
                                     else:
                                         self.parent_level_errors_dict[parent_line_number].append(
-                                            '                  ---> Parent: {} has no relation to child: {} which is on line {} and depth {}'.format(
+                                            '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}. Depths encountered during training: {}'.format(
                                                 colored(cls, 'blue', ),
                                                 colored(ccls, 'blue'),
                                                 colored(source_line, 'cyan'),
-                                                colored(depth, 'red')
+                                                colored(depth, 'red'),
+                                                colored(fine_relations.get(cls, {}).get(ccls, None), 'yellow')
                                             )
                                         )
+                                        self.plain_parent_level_errors_dict[parent_line_number].append(
+                                            '                  ---> Parent: {} has not been trained to have a relation to child: {} which is on line {} and depth {}. Depths encountered during training: {}'.format(
+                                                cls,
+                                                ccls,
+                                                source_line,
+                                                depth,
+                                                fine_relations.get(cls, {}).get(ccls, None)
+                                            )
+                                        )
+                                        self.true_positives += 1
 
                             else:
                                 # print('Success! Line--->: {}  Parent: {} has relation to child: {} at depth: {}'.format(source_line, cls,
                                 #                                                                       ccls, depth))
+                                self.true_negatives += 1
                                 pass
+
 
         if combined_errors:
             return False, combined_errors, neural_network_list
@@ -399,14 +467,23 @@ class Relations:
                 return True
         return False
 
+    def store_test_data_parent_children_relation(self, immediate_parent_list, child_class):
+        for cls in immediate_parent_list:
+            if cls not in self.global_test_data_parent_children_dict:
+                self.global_test_data_parent_children_dict[cls] = set(child_class)
+            else:
+                for ccls in child_class:
+                    self.global_test_data_parent_children_dict[cls].add(ccls)
+        return
 
-    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors):
+
+    def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors)
+            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
                 return False, '\n'.join(errors), errors_list_for_nn_processing
@@ -460,6 +537,8 @@ class Relations:
         return self.line_number_with_errors
 
     def construct_fine_relations(self):
+        if self.dumped_fine_relations:
+            return self.dumped_fine_relations
         '''
             This is showing how many times we have seen a child in the big HTML tree ("occurences").
             Also shows how many times we have seen the parent of that child in those "occurences",
@@ -517,6 +596,11 @@ class Relations:
                 for ccls in fine_relations[cls]:
                     if len(fine_relations[cls][ccls]) >= self.star_depth_threshold:
                         fine_relations[cls][ccls] = '*'
+                    else:
+                        if fine_relations[cls][ccls] == '*':
+                            continue
+                        else:
+                            fine_relations[cls][ccls] = list(fine_relations[cls][ccls])
                     # flag = True
                     # for i in range(1, self.star_depth_threshold + 1):
                     #     if fine_relations[cls][ccls] == "*":
@@ -631,13 +715,28 @@ class Relations:
 
     def print_parent_level_errors(self):
         errors = self.parent_level_errors_dict
+        plain_errors = self.plain_parent_level_errors_dict
+        ordered_plain_errors = dict(sorted(plain_errors.items()))
         ordered_errors = dict(sorted(errors.items()))
+        all_errors = 0
         print('\n')
         for pln, lst in ordered_errors.items():
             initial_line = 'Error in line {} ---|\n'.format(colored(pln, 'red'))
             cprint(initial_line + '\n'.join(lst))
+            all_errors += len(lst)
         cprint('Number of "parent line number" errors = {}'.format(colored(len(ordered_errors), 'red')))
+        cprint('Number of Total errors = {}'.format(colored(all_errors, 'red')))
+        return ordered_plain_errors
+
+    def dump_rules(self, filename="rules.json"):
+        fine_relations = self.construct_fine_relations()
+        with open(filename, 'w') as fp:
+            json.dump(fine_relations, fp, indent=4)
         return
 
+    def load_rules(self, filename="rules.json"):
+        with open(filename) as json_file:
+            rules = json.load(json_file)
+        return rules
 
 
