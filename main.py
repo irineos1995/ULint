@@ -9,23 +9,49 @@ import tracemalloc
 from datetime import datetime
 from termcolor import colored, cprint
 from NN import NeuralNetwork
+from UI import UserInterface
 
-class RuleComposer(Relations, NeuralNetwork):
+class RuleComposer(Relations, NeuralNetwork, UserInterface):
     TAG_OBJECT = None
     graph = None
     fine_graph = None
     sourceline_errors_for_NN = []
+    max_training_pages = None
+    total_training_elements = 0
+    total_test_elements = 0
 
-    def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None, debug=False):
+    def __init__(self, threshold, train_set, max_training_pages=None, star_depth_threshold=None, debug=False, json_rules_filename=None):
         start_time = datetime.now()
         tracemalloc.start()
+        if json_rules_filename:
+            dumped_fine_relations = self.load_rules(json_rules_filename)
+            Relations.__init__(self, threshold, star_depth_threshold, dumped_fine_relations)
+
+            end_time = datetime.now()
+            total_seconds = (end_time - start_time).total_seconds()
+            current, peak = tracemalloc.get_traced_memory()
+
+            if debug:
+                cprint('Total time for loading dumped rules: {} seconds'.format(colored(total_seconds, 'cyan')))
+                cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
+                cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
+                cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
+                cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
+            tracemalloc.stop()
+            return
         Relations.__init__(self, threshold, star_depth_threshold)
 
         if os.path.isdir(train_set):
             if debug: cprint('Is a directory!', 'yellow')
             files_list = glob.glob(os.path.join(train_set, "*.htm*"))
+            if not files_list:
+                files_list = glob.glob(os.path.join(train_set, "*.vue"))
+
+            if not files_list:
+                return
             if max_training_pages and len(files_list) >= max_training_pages > 0:
                 files_list = files_list[:max_training_pages]
+            self.max_training_pages = max_training_pages
             for file in files_list:
                 if debug: cprint('Processing file: {}'.format(colored(file, 'blue')))
                 with open(file, 'r') as tr_p:
@@ -62,14 +88,30 @@ class RuleComposer(Relations, NeuralNetwork):
             cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
-    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False):
+    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False, relation_cap=None):
+        start_time = datetime.now()
+        if relation_cap:
+            with open(test_page, 'r') as test_p:
+                test_soup = BeautifulSoup(test_p, 'html.parser')
+
+                for child in test_soup.childGenerator():
+                    if isinstance(child, Tag):
+                        self.identify_parent_that_contain_any(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
+
+
         with open(test_page, 'r') as test_p:
             test_soup = BeautifulSoup(test_p, 'html.parser')
 
             for child in test_soup.childGenerator():
                 if isinstance(child, Tag):
-                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors)
+                    self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
+        end_time = datetime.now()
+        total_seconds = (end_time - start_time).total_seconds()
+        cprint('Total time for linting with {} training pages: {} seconds'.format(colored(self.max_training_pages, 'cyan'),
+                                                                     colored(total_seconds, 'cyan')))
 
+        print('True positives: {}'.format(self.true_positives))
+        print('True negatives: {}'.format(self.true_negatives))
 
     def get_graph_distinct_nodes(self, graph):
         nodes = set()
@@ -283,6 +325,7 @@ class RuleComposer(Relations, NeuralNetwork):
         else:
             if "childGenerator" in dir(tree):
                 for child in tree.childGenerator():
+                    self.total_training_elements += 1
                     if isinstance(child, Tag):
                         child_class = child.get("class", [])
                         if child_class:
@@ -298,15 +341,39 @@ class RuleComposer(Relations, NeuralNetwork):
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
 
-
-
-    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors):
+    def identify_parent_that_contain_any(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap):
         if not tree:
             return
         else:
             if "childGenerator" in dir(tree):
                 for child in tree.childGenerator():
                     if isinstance(child, Tag):
+                        child_class = child.get("class", ())
+                        if child_class:
+                            parents = [tuple(parent.get('class', ())) for parent in child.parents]
+                            immediate_parent = parents[0]
+                            parent_line_numbers = [parent.sourceline for parent in child.parents]
+                            if not parents:
+                                parents = []
+                                parent_line_numbers = []
+                            self.store_test_data_parent_children_relation(immediate_parent, child_class)
+
+                    else:
+                        continue
+                    self.identify_parent_that_contain_any(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
+            else:
+                if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
+                    pass
+
+
+    def get_parents_recursively_for_test(self, tree, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap):
+        if not tree:
+            return
+        else:
+            if "childGenerator" in dir(tree):
+                for child in tree.childGenerator():
+                    if isinstance(child, Tag):
+                        self.total_test_elements += 1
                         child_class = child.get("class", [])
                         if child_class:
                             # parents = [tuple(parent.get('class')) for parent in child.parents if parent.get('class', [])]
@@ -316,7 +383,7 @@ class RuleComposer(Relations, NeuralNetwork):
                             if not parents:
                                 parents = [()]
                                 parent_line_numbers = []
-                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors)
+                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 # cprint(errors)
@@ -324,7 +391,7 @@ class RuleComposer(Relations, NeuralNetwork):
                                 self.sourceline_errors_for_NN += errors_list_for_nn_processing
                     else:
                         continue
-                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors)
+                    self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
             else:
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
@@ -352,3 +419,8 @@ class RuleComposer(Relations, NeuralNetwork):
         )
 
         return '\n'.join(report)
+
+    def get_total_training_elements(self):
+        return self.total_training_elements
+    def get_total_test_elements(self):
+        return self.total_test_elements
