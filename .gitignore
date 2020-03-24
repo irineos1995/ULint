@@ -3,3 +3,9 @@ __pycache__/
 .vscode/
 venv/
 .DS_Store
+frameworks-examples/
+integram_examples/
+startbootstrap-clean-blog-master/
+startbootstrap-sb-admin-2-master/
+vue-material-training_v2/
+boot4_official_examples/
