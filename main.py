@@ -383,7 +383,7 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
                             if not parents:
                                 parents = [()]
                                 parent_line_numbers = []
-                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap)
+                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, child.sourcepos+1)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 # cprint(errors)

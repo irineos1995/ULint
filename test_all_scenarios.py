@@ -484,18 +484,18 @@ class TestScenario20(unittest.TestCase):
         rule_composer_class.present_errors(errors, rules_filename="rules.json", star_depth_threshold=3)
 
     def test_actual_stuff(self):
-        # rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop', star_depth_threshold=3, debug=True, max_training_pages=50, json_rules_filename="foundation_official_rules_150_pages.json")
-        rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop/training-pages',
-                                           star_depth_threshold=3, debug=True, max_training_pages=1050)
+        rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop', star_depth_threshold=3, debug=True, max_training_pages=50, json_rules_filename="foundation_official_rules_150_pages.json")
+        # rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop/training-pages',
+        #                                    star_depth_threshold=3, debug=True, max_training_pages=1050)
         # rule_composer_class.dump_rules(filename="foundation_official_rules_150_pages.json")
-        # rule_composer_class.compare_test_page(test_page='frameworks-examples/foundation-sites-develop/test-pages/docker.html',
-        #                                       allow_fine_grain_relations=True,
-        #                                       ignore_unseen_classes=True,
-        #                                       include_warnings=False,
-        #                                       depth_cap=1,
-        #                                       parent_level_errors=True,
-        #                                       relation_cap=None
-        #                                       )
+        rule_composer_class.compare_test_page(test_page='frameworks-examples/foundation-sites-develop/test-pages/docker.html',
+                                              allow_fine_grain_relations=True,
+                                              ignore_unseen_classes=True,
+                                              include_warnings=False,
+                                              depth_cap=1,
+                                              parent_level_errors=True,
+                                              relation_cap=None
+                                              )
 
         errors = rule_composer_class.print_parent_level_errors()
         print('Total test elements: {}'.format(rule_composer_class.get_total_test_elements()))
