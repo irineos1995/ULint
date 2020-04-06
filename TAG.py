@@ -1,7 +1,6 @@
 import re
 from termcolor import colored, cprint
 import json
-from dump_encoder import PythonObjectEncoder
 
 class Relations:
     child_parents_dict = {}
@@ -39,7 +38,6 @@ class Relations:
                 if not match:
                     return False
             return True
-
 
     def equal_tuples(self, list1, list2):
         if isinstance(list1, str):
@@ -90,7 +88,6 @@ class Relations:
                     # if flag:
                     #     parent_child_depth_relation[cls][ccls] = '*'
         return parent_child_depth_relation
-
 
     def add_parents(self, child_tuple, parents_list):
         '''
@@ -218,7 +215,6 @@ class Relations:
                 nodes.add(child)
         return len(nodes)
 
-
     def remove_elements_below_threshold(self, child_tuple, list_of_tuples):
         '''
             list_of_list_of_tuples = [
@@ -279,8 +275,6 @@ class Relations:
                 new_list_of_tuples.append(tpl)
         new_list.append(new_list_of_tuples)
         return tuple(new_list)
-
-
 
     def child_and_given_parents_order_exists(self, child, parents_list):
         stored_orders = self.child_parents_dict[child]["encountered_parent_orders"]
@@ -348,7 +342,7 @@ class Relations:
                                         colored(cls, 'blue',),
                                         colored(ccls, 'blue'),
                                         colored(source_line, 'cyan'),
-                                        colored(source_pos, 'cyan'),
+                                        colored(source_pos, 'blue'),
                                         colored(depth, 'red')
                                     )
                                 ]
@@ -368,7 +362,7 @@ class Relations:
                                         colored(cls, 'blue', ),
                                         colored(ccls, 'blue'),
                                         colored(source_line, 'cyan'),
-                                        colored(source_pos, 'cyan'),
+                                        colored(source_pos, 'blue'),
                                         colored(depth, 'red')
                                     )
                                 )
@@ -418,7 +412,7 @@ class Relations:
                                                 colored(cls, 'blue', ),
                                                 colored(ccls, 'blue'),
                                                 colored(source_line, 'cyan'),
-                                                colored(source_pos, 'cyan'),
+                                                colored(source_pos, 'blue'),
                                                 colored(depth, 'red'),
                                                 colored(fine_relations.get(cls, {}).get(ccls, None), 'yellow')
                                             )
@@ -440,7 +434,7 @@ class Relations:
                                                 colored(cls, 'blue', ),
                                                 colored(ccls, 'blue'),
                                                 colored(source_line, 'cyan'),
-                                                colored(source_pos, 'cyan'),
+                                                colored(source_pos, 'blue'),
                                                 colored(depth, 'red'),
                                                 colored(fine_relations.get(cls, {}).get(ccls, None), 'yellow')
                                             )
@@ -465,8 +459,8 @@ class Relations:
 
 
         if combined_errors:
-            return False, combined_errors, neural_network_list
-        return True, '', []
+            return False, combined_errors
+        return True, ''
 
     def seen_class(self, cls):
         regex_classes_found = self.get_distinct_fine_grain_classes()
@@ -484,19 +478,18 @@ class Relations:
                     self.global_test_data_parent_children_dict[cls].add(ccls)
         return
 
-
     def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos):
         stored_children = self.child_parents_dict.keys()
         # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
         found = False
 
         if allow_fine_relations:
-            fine_relations_exists, errors, errors_list_for_nn_processing = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos)
+            fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos)
             if not fine_relations_exists:
                 self.line_number_with_errors.add(source_line)
-                return False, '\n'.join(errors), errors_list_for_nn_processing
+                return False, '\n'.join(errors)
             else:
-                return True, '', errors_list_for_nn_processing
+                return True, ''
 
         # Base Case (if child exists)
         for child in stored_children:
@@ -533,8 +526,6 @@ class Relations:
 
         else:
             return True, ""
-        
-            
 
     def get_data(self):
         for data in self.child_parents_dict:
@@ -609,19 +600,6 @@ class Relations:
                             continue
                         else:
                             fine_relations[cls][ccls] = list(fine_relations[cls][ccls])
-                    # flag = True
-                    # for i in range(1, self.star_depth_threshold + 1):
-                    #     if fine_relations[cls][ccls] == "*":
-                    #         continue
-                    #     else:
-                    #         if i not in fine_relations[cls][ccls]:
-                    #             flag = False
-                    #             break
-                    # if flag:
-                    #     fine_relations[cls][ccls] = '*'
-
-
-        # print('fine_relations ', fine_relations)
         return fine_relations
 
     def get_distinct_fine_grain_classes(self):
@@ -735,6 +713,7 @@ class Relations:
         cprint('Number of "parent line number" errors = {}'.format(colored(len(ordered_errors), 'red')))
         cprint('Number of Total errors = {}'.format(colored(all_errors, 'red')))
         return ordered_plain_errors
+
 
     def dump_rules(self, filename="rules.json"):
         fine_relations = self.construct_fine_relations()

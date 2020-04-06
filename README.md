@@ -111,7 +111,7 @@ rule_composer_class.compare_test_page(test_page='path/to/test/page',
 rule_composer_class.print_parent_level_errors()
 ```
 
-# If you want to convert a class (that has i.e. 3 relations with other classes) to a wildcard-class (can appear anywhere in the code) then use the parameter "relation_cap" (default: None)
+# If you want to convert a CSS class (that has i.e. 3 relations with other classes) to a wildcard-class (can appear anywhere in the code) then use the parameter "relation_cap" (default: None)
 ```python 
 from main import RuleComposer
 rule_composer_class = RuleComposer(threshold=1, 

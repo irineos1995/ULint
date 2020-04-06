@@ -104,7 +104,9 @@ def draw_graph3(networkx_graph,notebook=False,output_filename='graph_files/graph
         """
     pyvis_graph.set_options(options)
     # return and also save
-    return pyvis_graph.show(output_filename)
+    print(pyvis_graph.num_nodes())
+    pyvis_graph.show(output_filename)
+    return pyvis_graph
 
 
 def draw_fine_graph3(networkx_graph, notebook=False, output_filename='graph_files/graph.html', show_buttons=True,
@@ -285,4 +287,6 @@ def draw_fine_graph3_v2(networkx_graph, notebook=False, output_filename='graph_f
         """
     pyvis_graph.set_options(options)
     # return and also save
-    return pyvis_graph.show(output_filename)
+    pyvis_graph.show(output_filename)
+    # print(pyvis_graph.num_nodes())
+    return pyvis_graph

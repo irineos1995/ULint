@@ -6,16 +6,17 @@ from TAG import Relations
 import os
 import glob
 import tracemalloc
+import re
 from datetime import datetime
 from termcolor import colored, cprint
 from NN import NeuralNetwork
 from UI import UserInterface
+import mutator
 
 class RuleComposer(Relations, NeuralNetwork, UserInterface):
     TAG_OBJECT = None
     graph = None
     fine_graph = None
-    sourceline_errors_for_NN = []
     max_training_pages = None
     total_training_elements = 0
     total_test_elements = 0
@@ -44,8 +45,12 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
         if os.path.isdir(train_set):
             if debug: cprint('Is a directory!', 'yellow')
             files_list = glob.glob(os.path.join(train_set, "*.htm*"))
+            files_list = sorted(files_list, key=lambda x: float(re.findall("(\d+)", x)[0]))
+            files_list = self.distinguish_copy_and_original(files_list)
             if not files_list:
                 files_list = glob.glob(os.path.join(train_set, "*.vue"))
+                files_list = sorted(files_list, key=lambda x: float(re.findall("(\d+)", x)[0]))
+                files_list = self.distinguish_copy_and_original(files_list)
 
             if not files_list:
                 return
@@ -62,6 +67,7 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
 
         elif os.path.isfile(train_set):
             if debug: cprint('Is a file!', 'yellow')
+            files_list = []
             with open(train_set, 'r') as tr_p:
                 # print('Processing file: {}'.format(train_set))
                 if debug: cprint('Processing file: {}'.format(colored(train_set, 'blue')))
@@ -88,7 +94,17 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
             cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 
-    def compare_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False, relation_cap=None):
+    def distinguish_copy_and_original(self, files_list):
+        copy = []
+        original = []
+        for file in files_list:
+            if 'copy' in file.lower():
+                copy.append(file)
+            else:
+                original.append(file)
+        return original + copy
+
+    def compare_test_page(self, test_page, allow_fine_grain_relations=True, ignore_unseen_classes=True, include_warnings=False, depth_cap=None, parent_level_errors=True, relation_cap=None):
         start_time = datetime.now()
         if relation_cap:
             with open(test_page, 'r') as test_p:
@@ -105,6 +121,31 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
             for child in test_soup.childGenerator():
                 if isinstance(child, Tag):
                     self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
+        end_time = datetime.now()
+        total_seconds = (end_time - start_time).total_seconds()
+        cprint('Total time for linting with {} training pages: {} seconds'.format(colored(self.max_training_pages, 'cyan'),
+                                                                     colored(total_seconds, 'cyan')))
+
+        print('True positives: {}'.format(self.true_positives))
+        print('True negatives: {}'.format(self.true_negatives))
+
+    def compare_shuffled_test_page(self, test_page, allow_fine_grain_relations, ignore_unseen_classes, include_warnings=False, depth_cap=None, parent_level_errors=False, relation_cap=None):
+        start_time = datetime.now()
+        if relation_cap:
+            test_soup = mutator.shuffle(test_page)
+            for child in test_soup.childGenerator():
+                if isinstance(child, Tag):
+                    self.identify_parent_that_contain_any(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
+
+
+        shuffle_page_name = test_page.replace('.html', '_shuffled.html')
+        test_soup = mutator.shuffle(test_page)
+        with open(shuffle_page_name, 'w') as outfl:
+            outfl.write(str(test_soup))
+
+        for child in test_soup.childGenerator():
+            if isinstance(child, Tag):
+                self.get_parents_recursively_for_test(child, allow_fine_grain_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
         end_time = datetime.now()
         total_seconds = (end_time - start_time).total_seconds()
         cprint('Total time for linting with {} training pages: {} seconds'.format(colored(self.max_training_pages, 'cyan'),
@@ -307,7 +348,8 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
     def plot_directed_graph(self, filename):
         self.graph = self.create_graph()
         # plot_graph(graph)
-        draw_graph3(self.graph, output_filename=filename)
+        plotted_graph = draw_graph3(self.graph, output_filename=filename)
+        return plotted_graph
 
     def plot_fine_directed_graph(self, filename):
         graph = self.create_fine_graph()
@@ -317,7 +359,8 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
     def plot_fine_directed_graph_v2(self, filename):
         self.fine_graph = self.create_fine_graph_v2()
         # plot_graph(graph)
-        draw_fine_graph3_v2(self.fine_graph, output_filename=filename)
+        plotted_graph = draw_fine_graph3_v2(self.fine_graph, output_filename=filename)
+        return plotted_graph
 
     def get_parents_recursively(self, tree):
         if not tree:
@@ -383,12 +426,12 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
                             if not parents:
                                 parents = [()]
                                 parent_line_numbers = []
-                            passed, errors, errors_list_for_nn_processing = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, child.sourcepos+1)
+                            passed, errors = self.compare_child_and_its_parents_with_db(tuple(child_class), parents, child.sourceline, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, child.sourcepos+1)
                             if not passed:
                                 # print("Error in line: {} {}".format(child.sourceline, "Errors: {}".format(errors) if errors else ""))
                                 # cprint(errors)
                                 # print('-'*50)
-                                self.sourceline_errors_for_NN += errors_list_for_nn_processing
+                                pass
                     else:
                         continue
                     self.get_parents_recursively_for_test(child, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_level_errors, relation_cap)
@@ -396,9 +439,6 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
                 if not tree.isspace(): #Just to avoid printing "\n" parsed from document.
                     pass
 
-    def generate_nn_training_data(self):
-        self.process_errors(self.sourceline_errors_for_NN)
-        return
 
     def depth_of_errors_report(self):
         errors_list = self.depths_of_errors

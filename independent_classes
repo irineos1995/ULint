@@ -19,3 +19,15 @@ fas
 fa-bars
 ml-auto
 text-danger
+breadcrumb
+mb-4
+mr-2
+badge-secondary
+mb-5
+bg-secondary
+bg-light
+badge-danger
+mx-3
+active
+badge-success
+table-hover

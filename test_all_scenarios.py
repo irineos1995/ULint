@@ -5,6 +5,7 @@ current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfra
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 import json
+import filecmp
 
 from main import *
 
@@ -25,14 +26,7 @@ class TestScenario1(unittest.TestCase):
         self.assertEqual(len(errors), 0)
 
 class TestScenario2(unittest.TestCase):
-    def test_nested_children_permissively(self):
-        rule_composer_class = RuleComposer(threshold=1, train_set='scenarios/scenario_2/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_2/test.html')
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [])
-
-    def test_nested_children_not_permissively(self):
+    def test_nested_children(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_2/train.html')
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_2/test.html')
 
@@ -47,55 +41,23 @@ class TestScenario3(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [4])
 
-class TestScenario4(unittest.TestCase):
-    def test_threshold_matters_2(self):
-        rule_composer_class = RuleComposer(threshold=0.6, train_set='scenarios/scenario_4/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_4/test.html')
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [4])
-
-    def test_threshold_matters_3(self):
-        rule_composer_class = RuleComposer(threshold=1, train_set='scenarios/scenario_4/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_4/test.html')
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [])
-
-class TestScenario5(unittest.TestCase):
-    def test_threshold_matters_4(self):
-        rule_composer_class = RuleComposer(threshold=0.6, train_set='scenarios/scenario_5/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_5/test.html')
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [])
-
-    def test_threshold_matters_5(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_5/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_5/test.html')
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [5])
-
 class TestGraphPlot(unittest.TestCase):
     def test_plot_big_graph(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_5/big_training_data.html')
-        rule_composer_class.plot_directed_graph(filename='graph_files/big_graph.html')
+        graph = rule_composer_class.plot_directed_graph(filename='graph_files/big_graph.html')
+        self.assertEqual(graph.num_nodes(), 88)
 
     def test_plot_small_graph(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_5/train.html')
-        rule_composer_class.plot_directed_graph(filename='graph_files/small_graph.html')
+        graph = rule_composer_class.plot_directed_graph(filename='graph_files/small_graph.html')
+        self.assertEqual(graph.num_nodes(), 9)
 
 class TestFineGraphPlot(unittest.TestCase):
 
-    def test_plot_small_fine_graph(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_4/train.html')
-        # rule_composer_class.plot_fine_directed_graph(filename='small_fine_graph.html')
-        # rule_composer_class.construct_fine_relations()
-
     def test_plot_small_fine_graph_v2(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_4/train.html')
-        rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/small_fine_graph_v2.html')
+        graph = rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/small_fine_graph_v2.html')
+        self.assertEqual(graph.num_nodes(), 7)
 
 class TestScenario6(unittest.TestCase):
     def test_allow_fine_relations(self):
@@ -151,119 +113,21 @@ class TestScenario9(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [7])
 
-class TestScenario10(unittest.TestCase):
-    def test_training_algorithm_with_10_pages(self):
-        max_training_pages = 10
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_20_pages(self):
-        max_training_pages = 20
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_30_pages(self):
-        max_training_pages = 30
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_40_pages(self):
-        max_training_pages = 40
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_50_pages(self):
-        max_training_pages = 50
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_60_pages(self):
-        max_training_pages = 60
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_70_pages(self):
-        max_training_pages = 70
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-        self.assertEqual([], [])
-
-    def test_training_algorithm_with_over_the_limit_pages(self):
-        max_training_pages = 1000
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_10/train_set/', max_training_pages=max_training_pages)
-
-        rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/huge_fine_graph_v2.html')
-        self.assertEqual([], [])
-
 class TestScenario11(unittest.TestCase):
-    def test_vanilla_bootstrap(self):
+    def test_with_trained_page(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_11/vanilla_bootstrap_train_pages/')
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_11/test.htm', allow_fine_grain_relations=True)
-        # rule_composer_class.plot_fine_directed_graph_v2(filename='graph_files/fine_graph_v2_with_vanilla_bootstrap.html')
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
 
-    def test_memory_footprint_25_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=25)
-        print('Total training elements for 25 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_50_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=50)
-        print('Total training elements for 50 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_75_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=75)
-        print('Total training elements for 75 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_100_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=100)
-        print('Total training elements for 100 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_125_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=125)
-        print('Total training elements for 125 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_150_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=150)
-        print('Total training elements for 150 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_175_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=175)
-        print('Total training elements for 175 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_200_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=200)
-        print('Total training elements for 200 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_225_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=225)
-        print('Total training elements for 225 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-    def test_memory_footprint_233_pages(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples', max_training_pages=233)
-        print('Total training elements for 233 pages: {}'.format(rule_composer_class.get_total_training_elements()))
-        self.assertEqual([], [])
-
-class TestScenario12(unittest.TestCase):
-    def test_real_data(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_12/bootstrap_4_html_files/', star_depth_threshold=3)
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html', allow_fine_grain_relations=True, ignore_unseen_classes=True)
+    def test_with_unseen_page(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_11b/vanilla_bootstrap_train_pages/')
+        rule_composer_class.compare_test_page(test_page='scenarios/scenario_11b/test.htm', allow_fine_grain_relations=True)
 
         errors = rule_composer_class.get_line_number_errors()
-
-        set_of_errors = set(errors)
-        print(set_of_errors)
-        print(len(set_of_errors))
-        self.assertEqual([], [])
+        expected_errors = [24,25,26,27,28,29,31,35,36,40,41,43,45,47,53,56,58,60,62,68,71,73,75,77,83,88,89,90,91,92,94,96,105,107,114,116]
+        self.assertEqual(list(errors), expected_errors)
 
 class TestScenario13(unittest.TestCase):
     def test_real_data_with_w3_rules(self):
@@ -277,40 +141,7 @@ class TestScenario13(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
 
         set_of_errors = set(errors)
-        print(set_of_errors)
-        print(len(set_of_errors))
-        self.assertEqual([], [])
-
-class TestScenario14(unittest.TestCase):
-    def test_nn_data_processing(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/')
-        processed_data = rule_composer_class.process_data(rule_composer_class.construct_fine_relations())
-
-        print(processed_data)
-        self.assertEqual([], [])
-
-    def test_nn_data_processing_to_csv(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/')
-        processed_data = rule_composer_class.process_data(rule_composer_class.construct_fine_relations())
-        rule_composer_class.write_process_data_to_csv(processed_data, 'processed_data.csv')
-
-        print(processed_data)
-        self.assertEqual([], [])
-
-    def test_nn_errors_processing_to_csv(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html', allow_fine_grain_relations=True, ignore_unseen_classes=True)
-        rule_composer_class.generate_nn_training_data('working.csv')
-
-    def test_nn_prediction(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html', allow_fine_grain_relations=True, ignore_unseen_classes=True)
-
-        rule_composer_class.generate_nn_training_data('working.csv')
-        rule_composer_class.train()
-
-        print(rule_composer_class.predict([[128,212,2], [128,2,-1]]))
-        self.assertEqual([], [])
+        self.assertEqual(len(set_of_errors), 168)
 
 class TestScenario15(unittest.TestCase):
     def test_depth_cap(self):
@@ -319,7 +150,7 @@ class TestScenario15(unittest.TestCase):
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
-                                              depth_cap=None,
+                                              depth_cap=1,
                                               parent_level_errors=True
                                               )
 
@@ -333,36 +164,16 @@ class TestScenario15(unittest.TestCase):
 
         self.assertFalse(365 in set_of_errors)
 
-class TestScenario16(unittest.TestCase):
-    def test_depth_report(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3)
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
-                                              allow_fine_grain_relations=True,
-                                              ignore_unseen_classes=True,
-                                              include_warnings=False,
-                                              depth_cap=None
-                                              )
-
-        errors = rule_composer_class.get_line_number_errors()
-
-        set_of_errors = set(errors)
-        print(set_of_errors)
-        print(len(set_of_errors))
-
-        cprint(rule_composer_class.depth_of_errors_report())
-
-        self.assertFalse(False)
-
 class TestScenario17(unittest.TestCase):
     def test_relation_cap(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True)
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False)
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
                                               depth_cap=None,
                                               parent_level_errors=True,
-                                              relation_cap=None
+                                              relation_cap=2
                                               )
 
         rule_composer_class.print_parent_level_errors()
@@ -373,29 +184,8 @@ class TestScenario17(unittest.TestCase):
         print(len(set_of_errors))
         cprint(rule_composer_class.depth_of_errors_report())
 
-        # self.assertFalse(507 in set_of_errors)
+        self.assertFalse(508 in set_of_errors)
 
-class TestScenario18(unittest.TestCase):
-    def test_linting_time(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=1, debug=False, max_training_pages=225, json_rules_filename="rules.json")
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
-                                              allow_fine_grain_relations=True,
-                                              ignore_unseen_classes=True,
-                                              include_warnings=False,
-                                              depth_cap=1,
-                                              parent_level_errors=True,
-                                              relation_cap=6
-                                              )
-
-        rule_composer_class.print_parent_level_errors()
-        errors = rule_composer_class.get_line_number_errors()
-        print(len(errors))
-        # set_of_errors = set(errors)
-        # print(set_of_errors)
-        # print(len(set_of_errors))
-        # cprint(rule_composer_class.depth_of_errors_report())
-
-        # self.assertFalse(507 in set_of_errors)
 
 class TestScenario19(unittest.TestCase):
     def test_data_dump(self):
@@ -408,7 +198,7 @@ class TestScenario19(unittest.TestCase):
         self.assertEqual(fine_relations, rules)
 
     def test_data_load(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="rules.json")
         rule_composer_class.compare_test_page(
             test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
             allow_fine_grain_relations=True,
@@ -421,7 +211,7 @@ class TestScenario19(unittest.TestCase):
 
         errors = rule_composer_class.get_line_number_errors()
 
-        rule_composer_class_2 = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
+        rule_composer_class_2 = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225)
         rule_composer_class_2.compare_test_page(
             test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
             allow_fine_grain_relations=True,
@@ -433,12 +223,12 @@ class TestScenario19(unittest.TestCase):
         )
 
         errors_2 = rule_composer_class.get_line_number_errors()
-
+        os.remove("rules.json")
         self.assertEqual(errors, errors_2)
 
 class TestScenario20(unittest.TestCase):
     def test_proving_bootlint_wrong(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
         # rule_composer_class.dump_rules(filename="rules.json")
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_13/test.html',
                                               allow_fine_grain_relations=True,
@@ -451,23 +241,9 @@ class TestScenario20(unittest.TestCase):
 
         rule_composer_class.print_parent_level_errors()
         errors = rule_composer_class.get_line_number_errors()
-        print(len(errors))
+        self.assertFalse(19 in errors)
 
-class TestScenario21(unittest.TestCase):
-    def test_training_with_vue_framework(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='vue-material-training_v2/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="rules_vue.json")
-        # rule_composer_class.dump_rules(filename="rules_vue.json")
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_14/test.vue',
-                                              allow_fine_grain_relations=True,
-                                              ignore_unseen_classes=True,
-                                              include_warnings=False,
-                                              depth_cap=6,
-                                              parent_level_errors=True,
-                                              relation_cap=None
-                                              )
-        rule_composer_class.print_parent_level_errors()
-
-class TestScenario20(unittest.TestCase):
+class TestScenario22(unittest.TestCase):
     def test_UI(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
         # rule_composer_class.dump_rules(filename="rules.json")
@@ -483,12 +259,9 @@ class TestScenario20(unittest.TestCase):
         errors = rule_composer_class.print_parent_level_errors()
         rule_composer_class.present_errors(errors, rules_filename="rules.json", star_depth_threshold=3)
 
-    def test_actual_stuff(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop', star_depth_threshold=3, debug=True, max_training_pages=50, json_rules_filename="foundation_official_rules_150_pages.json")
-        # rule_composer_class = RuleComposer(threshold=0, train_set='frameworks-examples/foundation-sites-develop/training-pages',
-        #                                    star_depth_threshold=3, debug=True, max_training_pages=1050)
-        # rule_composer_class.dump_rules(filename="foundation_official_rules_150_pages.json")
-        rule_composer_class.compare_test_page(test_page='frameworks-examples/foundation-sites-develop/test-pages/docker.html',
+    def test_shuffled_stuff(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False)
+        rule_composer_class.compare_shuffled_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
                                               include_warnings=False,
@@ -496,7 +269,6 @@ class TestScenario20(unittest.TestCase):
                                               parent_level_errors=True,
                                               relation_cap=None
                                               )
-
-        errors = rule_composer_class.print_parent_level_errors()
-        print('Total test elements: {}'.format(rule_composer_class.get_total_test_elements()))
-        print('Total train elements: {}'.format(rule_composer_class.get_total_training_elements()))
+        actual_file = 'scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html'
+        shuffled_file = 'scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index_shuffled.html'
+        self.assertFalse(filecmp.cmp(actual_file, shuffled_file))
