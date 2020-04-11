@@ -3,6 +3,13 @@
 pytest -s test_all_scenarios.py::TestScenario22::test_shuffled_stuff
 ```
 
+# How to execute the script
+```bash
+bash.py -t <training_directory> -l <lint_page>
+OR
+bash.py -l <lint_page> -r <relations_dump>
+```
+
 # How to train the linter
 ```python 
 from main import RuleComposer
