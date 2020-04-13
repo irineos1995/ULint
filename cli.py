@@ -4,7 +4,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", dest='train', help="training directory", action="store")
 parser.add_argument("-l", dest='lint', help="page to be linted", action="store")
-parser.add_argument("-r", dest='relations', help="page to be linted", action="store")
+parser.add_argument("-r", dest='relations', help="json dump (rules) to be loaded", action="store")
 args = parser.parse_args()
 
 if args.train and args.lint:
