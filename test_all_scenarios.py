@@ -67,13 +67,6 @@ class TestScenario6(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
 
-    def test_disable_fine_relations(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_6/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_6/test.html', allow_fine_grain_relations=False)
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [4])
-
 class TestScenario7(unittest.TestCase):
     def test_allow_fine_relations(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_7/train.html')
@@ -81,13 +74,6 @@ class TestScenario7(unittest.TestCase):
 
         errors = rule_composer_class.get_line_number_errors()
         self.assertEqual(list(errors), [])
-
-    def test_disable_fine_relations(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='scenarios/scenario_7/train.html')
-        rule_composer_class.compare_test_page(test_page='scenarios/scenario_7/test.html', allow_fine_grain_relations=False)
-
-        errors = rule_composer_class.get_line_number_errors()
-        self.assertEqual(list(errors), [4])
 
 class TestScenario8(unittest.TestCase):
     def test_training_a_directory(self):
@@ -190,15 +176,15 @@ class TestScenario17(unittest.TestCase):
 class TestScenario19(unittest.TestCase):
     def test_data_dump(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
-        rule_composer_class.dump_rules(filename="rules.json")
+        rule_composer_class.dump_rules(filename="exported_rules_files/rules.json")
 
         fine_relations = rule_composer_class.construct_fine_relations()
-        with open('rules.json') as json_file:
+        with open('exported_rules_files/rules.json', 'r') as json_file:
             rules = json.load(json_file)
         self.assertEqual(fine_relations, rules)
 
     def test_data_load(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
         rule_composer_class.compare_test_page(
             test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
             allow_fine_grain_relations=True,
@@ -223,13 +209,13 @@ class TestScenario19(unittest.TestCase):
         )
 
         errors_2 = rule_composer_class.get_line_number_errors()
-        os.remove("rules.json")
+        os.remove("exported_rules_files/rules.json")
         self.assertEqual(errors, errors_2)
 
 class TestScenario20(unittest.TestCase):
     def test_proving_bootlint_wrong(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
-        # rule_composer_class.dump_rules(filename="rules.json")
+        # rule_composer_class.dump_rules(filename="exported_rules_files/rules.json")
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_13/test.html',
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
@@ -245,8 +231,8 @@ class TestScenario20(unittest.TestCase):
 
 class TestScenario22(unittest.TestCase):
     def test_UI(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
-        # rule_composer_class.dump_rules(filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
+        # rule_composer_class.dump_rules(filename="exported_rules_files/rules.json")
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
                                               allow_fine_grain_relations=True,
                                               ignore_unseen_classes=True,
@@ -257,7 +243,7 @@ class TestScenario22(unittest.TestCase):
                                               )
 
         errors = rule_composer_class.print_parent_level_errors()
-        rule_composer_class.present_errors(errors, rules_filename="rules.json", star_depth_threshold=3)
+        rule_composer_class.present_errors(errors, rules_filename="exported_rules_files/rules.json", star_depth_threshold=3)
 
     def test_shuffled_stuff(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False)
