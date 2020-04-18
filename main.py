@@ -152,15 +152,6 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
         print('True positives: {}'.format(self.true_positives))
         print('True negatives: {}'.format(self.true_negatives))
 
-    def get_graph_distinct_nodes(self, graph):
-        nodes = set()
-        for node in graph.nodes:
-            print(node)
-            eval_node = eval(node)
-            sorted_node = tuple(sorted(eval_node))
-            nodes.add(sorted_node)
-        return nodes
-
 
     def create_graph(self):
         '''
