@@ -209,7 +209,7 @@ class TestScenario19(unittest.TestCase):
         )
 
         errors_2 = rule_composer_class.get_line_number_errors()
-        os.remove("exported_rules_files/rules.json")
+        # os.remove("exported_rules_files/rules.json")
         self.assertEqual(errors, errors_2)
 
 class TestScenario20(unittest.TestCase):
