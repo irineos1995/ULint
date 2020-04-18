@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from bs4 import NavigableString, Tag, Doctype
 import networkx as nx
-from graph_base_case import plot_graph, draw_graph3, draw_fine_graph3, draw_fine_graph3_v2
+from graph_base_case import draw_graph3, draw_fine_graph3_v2
 from TAG import Relations
 import os
 import glob
@@ -336,18 +336,11 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
 
     def plot_directed_graph(self, filename):
         self.graph = self.create_graph()
-        # plot_graph(graph)
         plotted_graph = draw_graph3(self.graph, output_filename=filename)
         return plotted_graph
 
-    def plot_fine_directed_graph(self, filename):
-        graph = self.create_fine_graph()
-        # plot_graph(graph)
-        draw_fine_graph3(graph, output_filename=filename)
-
     def plot_fine_directed_graph_v2(self, filename):
         self.fine_graph = self.create_fine_graph_v2()
-        # plot_graph(graph)
         plotted_graph = draw_fine_graph3_v2(self.fine_graph, output_filename=filename)
         return plotted_graph
 
