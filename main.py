@@ -36,7 +36,6 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
                 cprint('Total time for loading dumped rules: {} seconds'.format(colored(total_seconds, 'cyan')))
                 cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
                 cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
-                cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
                 cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
             tracemalloc.stop()
             return
@@ -90,7 +89,6 @@ class RuleComposer(Relations, NeuralNetwork, UserInterface):
             cprint('Total number of fine rules learned: {}'.format(colored(self.get_number_of_fine_rules_composed(), 'cyan')))
             cprint('Total number of fine nodes: {}'.format(colored(self.get_number_of_fine_nodes_composed(), 'cyan')))
             # cprint('Total number of fine nodes (NetworkX): {}'.format(colored(number_of_fine_nodes), 'cyan'))
-            cprint('Total number of distinct bootstrap classes identified: {}'.format(colored(len(self.get_distinct_fine_grain_classes()), 'cyan')))
             cprint("Peak memory usage was {} MB".format(colored((peak / 10 ** 6), 'cyan')))
         tracemalloc.stop()
 

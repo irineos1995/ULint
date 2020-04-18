@@ -215,82 +215,6 @@ class Relations:
                 nodes.add(child)
         return len(nodes)
 
-    def remove_elements_below_threshold(self, child_tuple, list_of_tuples):
-        '''
-            list_of_list_of_tuples = [
-                [
-                    ('b',), ('line-gutter-backdrop',)
-                ]
-            ]
-        '''
-        parents_that_are_mandatory_due_to_threshold = []
-        for p, prob in self.child_parents_dict[child_tuple]['parents'].items():
-            if prob >= self.THRESHOLD:
-                parents_that_are_mandatory_due_to_threshold.append(p)
-
-        new_list = []
-        new_list_of_tuples = []
-        parents_and_probs = self.child_parents_dict[child_tuple]["parents"]
-        for tpl in list_of_tuples:
-            local_flag = False
-            for parent_tuple in parents_and_probs:
-                if self.equal_tuples(tpl, parent_tuple):
-                    local_flag = True
-                    if parents_and_probs[parent_tuple] >= self.THRESHOLD:
-                        new_list_of_tuples.append(tpl)
-                    break
-            if not local_flag:
-                new_list_of_tuples.append(tpl)
-        for element in parents_that_are_mandatory_due_to_threshold:
-            if element not in new_list_of_tuples:
-                new_list_of_tuples += (element, )
-        new_list.append(new_list_of_tuples)
-        return tuple(new_list)
-
-    def remove_elements_below_threshold_for_parents(self, child_tuple, list_of_tuples):
-        '''
-            list_of_list_of_tuples = [
-                [
-                    ('b',), ('line-gutter-backdrop',)
-                ]
-            ]
-        '''
-        parents_that_are_mandatory_due_to_threshold = []
-        for p, prob in self.child_parents_dict[child_tuple]['parents'].items():
-            if prob >= self.THRESHOLD:
-                parents_that_are_mandatory_due_to_threshold.append(p)
-
-        new_list = []
-        new_list_of_tuples = []
-        parents_and_probs = self.child_parents_dict[child_tuple]["parents"]
-        for tpl in list_of_tuples:
-            local_flag = False
-            for parent_tuple in parents_and_probs:
-                if self.equal_tuples(tpl, parent_tuple):
-                    local_flag = True
-                    if parents_and_probs[parent_tuple] >= self.THRESHOLD:
-                        new_list_of_tuples.append(tpl)
-                    break
-            if not local_flag:
-                new_list_of_tuples.append(tpl)
-        new_list.append(new_list_of_tuples)
-        return tuple(new_list)
-
-    def child_and_given_parents_order_exists(self, child, parents_list):
-        stored_orders = self.child_parents_dict[child]["encountered_parent_orders"]
-        for order in stored_orders:
-            if len(order) == len(parents_list):
-                if len(order) == 1 and order[0] == ():
-                    return True
-                local_flag = True
-                for i, class_tuple in enumerate(parents_list):
-                    if not self.equal_tuples(class_tuple, order[i]):
-                        local_flag = False
-                        break
-                if local_flag:
-                    return True
-        return False
-
     def can_parent_can_contain_any_class(self, parent, relation_cap):
         if parent not in self.global_test_data_parent_children_dict:
             return False
@@ -314,8 +238,6 @@ class Relations:
                 child_classes.append(key)
 
         for ccls in child_tuple:
-            # if not self.seen_class(ccls) and ignore_unseen_classes:
-            #     continue
             for depth, parent in enumerate(parents_list):
                 if parent_line_numbers:
                     parent_line_number = parent_line_numbers[depth]
@@ -462,13 +384,6 @@ class Relations:
             return False, combined_errors
         return True, ''
 
-    def seen_class(self, cls):
-        regex_classes_found = self.get_distinct_fine_grain_classes()
-        for regex in regex_classes_found:
-            if re.match(regex, cls):
-                return True
-        return False
-
     def store_test_data_parent_children_relation(self, immediate_parent_list, child_class):
         for cls in immediate_parent_list:
             if cls not in self.global_test_data_parent_children_dict:
@@ -479,58 +394,12 @@ class Relations:
         return
 
     def compare_child_and_its_parents_with_db(self, child_tuple, parents_list, source_line, allow_fine_relations, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos):
-        stored_children = self.child_parents_dict.keys()
-        # stored_orders = self.child_parents_dict[child_tuple]["encountered_parent_orders"]
-        found = False
-
-        if allow_fine_relations:
-            fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos)
-            if not fine_relations_exists:
-                self.line_number_with_errors.add(source_line)
-                return False, '\n'.join(errors)
-            else:
-                return True, ''
-
-        # Base Case (if child exists)
-        for child in stored_children:
-            if self.equal_tuples(child, child_tuple):
-                found = True
-                child_tuple = child
-                break
-
-        if not found:
+        fine_relations_exists, errors = self.compare_child_with_parents_list_fine_relations(child_tuple, parents_list, source_line, ignore_unseen_classes, include_warnings, depth_cap, parent_line_numbers, parent_level_errors, relation_cap, source_pos)
+        if not fine_relations_exists:
             self.line_number_with_errors.add(source_line)
-            return False, "Class has not been trained!"
-
-        net_stored_orders = [self.remove_elements_below_threshold(child_tuple, order) for order in self.child_parents_dict[child_tuple]["encountered_parent_orders"]]
-        
-
-        # Child has been found
-        if not self.child_and_given_parents_order_exists(child_tuple, parents_list):
-            net_parents_list = self.remove_elements_below_threshold_for_parents(child, parents_list)
-        
-            for order in net_stored_orders:
-                if len(order) == len(net_parents_list):
-                    if len(order) == 1 and order[0] == ():
-                        return True, ""
-                    local_flag = True
-                    for i, class_tuple in enumerate(net_parents_list):
-                        if not self.equal_tuples(class_tuple, order[i]):
-                            local_flag = False
-                            break
-                    if local_flag:
-                        return True, ""
-            self.line_number_with_errors.add(source_line)
-            # return False, "Parents order does not exist!"
-            return False, ""
-
+            return False, '\n'.join(errors)
         else:
-            return True, ""
-
-    def get_data(self):
-        for data in self.child_parents_dict:
-            print(data, ":", self.child_parents_dict[data])
-        # return self.child_parents_dict
+            return True, ''
 
     def get_line_number_errors(self):
         return self.line_number_with_errors
@@ -601,102 +470,6 @@ class Relations:
                         else:
                             fine_relations[cls][ccls] = list(fine_relations[cls][ccls])
         return fine_relations
-
-    def get_distinct_fine_grain_classes(self):
-        '''
-            parent_child_depth_relation[parent] = {
-                            child : {depth+1}
-                        }
-        '''
-
-        bootstrap_4_rules = \
-            {'rounded-top', 'input-group-append', 'initialism', 'carousel-control-next-icon', 'form-check',
-             'align-self-.*-center', 'card-link', 'border-info', 'badge-light', 'alert', 'w-25', 'text-right',
-             'needs-validation', 'd-none', 'custom-file-input', 'form-control-sm', 'btn-outline-primary', 'custom-range',
-             'bg-secondary', 'modal-body', 'col-md-.*', 'dropdown-menu-right', 'align-content-end', 'pagination', 'h-75',
-             'flex-grow-[0-1]+', '<li>', 'align-content-.*-center', 'alert-link', 'align-items-stretch',
-             'align-content-.*-around', 'alert-warning', 'btn-outline-warning', 'input-group-text', 'carousel-indicators',
-             'bg-dark', 'custom-select', 'h-25', 'list-group-flush', 'text-reset', 'form-control-range',
-             'align-items-start', 'border-0', 'h1-h6', 'dropright', 'pr-[0-9]+', 'modal-xl', 'mx-[0-9]+', 'carousel-item',
-             'd-.*-inline-flex', 'float-.*-left', 'bg-danger', 'navbar-dark', 'form-check-input', 'card-text',
-             'carousel-caption', 'd-.*-table-cell', 'border-dark', 'card-subtitle', 'align-bottom', 'mb-.*-[0-9]+',
-             'float-none', 'd-.*-inline', 'card-img-overlay', 'nav-item', 'valid-tooltip', 'input-lg', 'font-weight-light',
-             'form-control-plaintext', 'card-info', 'align-content-.*-stretch', 'border-light', 'sr-only', 'table-bordered',
-             'custom-control-inline', 'badge-danger', 'rounded-left', 'bg-warning', 'badge-secondary', 'my-[0-9]+',
-             'align-self-.*-baseline', 'badge-info', 'alert-heading', 'modal-dialog-centered', 'modal-sm', 'badge-dark',
-             'sr-only-focusable', '<tr>', 'col-sm-.*', 'tab-content', 'mark', 'no-gutters', 'card-columns', 'col-auto',
-             'toast-header', 'align-items-baseline', 'border-right-0', 'list-group', 'align-self-.*-end', 'mx-.*-[0-9]+',
-             'w-50', 'rounded-bottom', 'list-group-item-info', 'blockquote-footer', 'page-link', 'pl-[0-9]+',
-             'card-img-bottom', 'btn-success', 'btn-group-lg', 'collapse', 'navbar-collapse', 'text-.*-left',
-             'collapse', 'show', 'mx-auto', 'card-body', 'text-warning', 'display:block', 'card-group', 'card-header-pills',
-             'd-table', 'flex-row-reverse', 'carousel', 'align-self-start', 'text-dark', 'container-.*', 'form-inline',
-             'media', 'btn-toolbar', 'flex-column', 'm-[0-9]+', 'navnav-tabs', 'd-.*-inline-block', 'flex-.*-wrap',
-             'flex-column-reverse', 'invisible', 'align-items-.*-center', 'nav-link', 'text-left',
-             'align-items-.*-baseline', 'shadow-none', 'align-text-top', 'mt-[0-9]+', 'embed-responsive-item',
-             'align-text-bottom', 'embed-responsive-3by4', 'navbar-brand', 'max-height', 'alert-light', 'input-group',
-             'dropdown-item-text', 'd-inline-flex', 'ml-.*-[0-9]+', 'shadow', 'lead', 'visible', 'align-self-baseline',
-             'btn-outline-info', 'card-success', 'btn-light', 'alert-success', 'custom-control', 'form-control',
-             'thead-light', 'border-sm', 'btn-secondary', 'text-primary', 'col-.*', 'text-break', 'sticky-top',
-             'flex-.*-row-reverse', 'thead-dark', 'btn-outline-dark', 'rounded-0', '<ul>', 'align-items-.*-start',
-             'custom-file', 'rounded-right', 'img-fluid', 'border-primary', 'align-content-around', 'badge-pill',
-             'progress', 'btn-outline-light', 'text-decoration-none', 'list-inline', 'table-responsive-.*', '<ol>',
-             'align-self-.*-start', 'btn-primary', 'img-thumbnail', 'py-.*-[0-9]+', 'mr-[0-9]+', 'align-items-end',
-             'card-header-tabs', 'small', 'container', 'flex-.*-fill', 'flex-.*-nowrap', 'color:inherit', 'col-xl-.*',
-             'card-danger', 'text-light', 'badge-primary', 'spinner-border', 'col-lg-.*', 'w-100', 'progress-bar',
-             'pl-.*-[0-9]+', 'jumbotron', 'dropup', 'list-group-horizontal', 'custom-control-label',
-             'flex-.*-column-reverse', 'alert-secondary', 'btn-sm', 'justify-content-.*-around', 'w-75', 'active', 'btn-lg',
-             'flex-shrink-[0-1]+', 'd-.*-flex', 'h-50', 'dropdown-header', 'bg-primary', 'border-secondary',
-             'custom-select-sm', 'flex-.*-row', 'custom-file-label', 'p-[0-9]+', 'card-img-top', 'd-.*-table',
-             'pagination-sm', 'navnav-pills', 'custom-radio', 'breadcrumb', 'flex-row', 'form-control-file',
-             'align-self-.*-stretch', 'border', 'pre-scrollable', 'border-left-0', 'badge-success', 'fixed-bottom',
-             'form-check-label', 'list-group-item-dark', 'modal-header', 'card', 'font-weight-lighter', 'valid-feedback',
-             'card-dark', 'list-inline-item', 'rounded', 'row-cols-.*', 'align-items-.*-stretch', 'btn-group-sm',
-             'd-.*-table-row', 'flex-wrap-reverse', 'rounded-circle', 'progress-bar-striped', 'pr-.*-[0-9]+',
-             'justify-content-.*-start', 'list-group-item-light', 'modal-dialog-scrollable', 'text-capitalize',
-             'navbar-nav', 'modal-content', 'float-left', 'fade', 'text-center', '<pre>', 'btn-link', 'spinner-border-sm',
-             'table-striped', 'carousel-control-prev', 'text-justify', 'dropdown-menu', 'my-.*-[0-9]+', 'pt-.*-[0-9]+',
-             'h-100', 'text-secondary', 'text-.*-right', 'toast-body', 'card-secondary', 'clearfix', 'dropdown-item',
-             'badge-warning', 'table-active', 'alert-primary', 'input-sm', 'align-middle', 'text-uppercase', 'bg-info',
-             'border-bottom-0', 'table-hover', 'form-group', 'p-.*-[0-9]+', 'navbar-light', 'is-invalid',
-             'align-content-stretch', 'text-nowrap', 'jumbotron-fluid', 'align-content-.*-start',
-             'list-group-horizontal-.*', 'modal-lg', 'text-white', 'border-danger', '<abbr>', 'align-self-center',
-             'text-hide', 'text-muted', 'fixed-top', 'nav-justified', 'd-table-row', 'list-group-item-success', 'mb-[0-9]+',
-             'pb-[0-9]+', 'card-title', 'list-group-item-warning', 'modal-footer', 'table', 'navbar-text',
-             'container-fluid', 'is-valid', 'alert-dark', 'embed-responsive', 'btn-group-vertical', 'float-.*-right',
-             'navbar-toggler', 'text-danger', 'text-success', 'carousel-control-prev-icon', 'flex-nowrap', 'py-[0-9]+',
-             'embed-responsive-16by9', 'font-italic', 'btn', 'card-header', 'btn-dark', 'align-self-stretch', 'btn-block',
-             'flex-.*-wrap-reverse', 'text-lowercase', 'card-footer', 'list-group-item-action', 'btn-outline-danger',
-             'width:100%', 'px-.*-[0-9]+', 'btn-outline-success', 'invalid-feedback', 'align-self-end',
-             'custom-control-input', 'border-lg', 'dropleft', 'justify-content-.*', 'px-[0-9]+', 'pagination-lg', 'd-block',
-             'flex-fill', 'justify-content-.*-center', 'navbar-expand-.*', 'shadow-lg', 'alert-dismissible', 'd-table-cell',
-             'card-primary', 'stretched-link', 'list-group-item-primary', 'bg-light', 'alert-danger', 'align-items-.*-end',
-             'justify-content-.*-between', 'font-weight-bold', 'align-top', 'toast', 'dropdown-toggle', 'border-white',
-             'input-group-prepend', 'list-group-item', 'btn-group', 'list-group-item-danger', 'bg-success',
-             'align-content-.*-end', 'btn-warning', 'd-.*-none', 'shadow-sm', 'input-group-sm', 'align-content-start',
-             'mr-.*-[0-9]+', 'was-validated', 'text-.*-center', 'margin-top:-375rem;margin-bottom:0;', 'align-items-center',
-             'custom-checkbox', '.*', 'flex-wrap', 'list-unstyled', 'carousel-inner', 'border-top-0', 'custom-switch',
-             'page-item', 'align-baseline', 'disabled', 'btn-info', 'form-control-lg', 'flex-.*-column', 'm-.*-[0-9]+',
-             'progress-bar-animated', 'badge', 'alert-info', 'font-weight-normal', 'tab-pane', 'close', 'card-deck',
-             'dropdown', 'navbar', 'spinner-grow-sm', 'table-dark', 'pt-[0-9]+', 'd-.*-block', 'ml-[0-9]+',
-             'breadcrumb-item', 'card-warning', 'align-content-center', 'custom-select-lg', 'table-borderless',
-             'media-body', 'blockquote', 'justify-content-.*-end', 'border-success', 'font-weight-bolder',
-             'carousel-control-next', 'card-light', 'float-right', 'row', 'text-info', 'form-check-inline', 'd-flex',
-             'd-inline', 'table-condensed', '<td>', 'mt-.*-[0-9]+', 'modal', 'dropdown-divider', 'invalid-tooltip',
-             'btn-outline-secondary', 'input-group-lg', 'spinner-grow', 'border-warning', 'd-inline-block', 'btn-danger',
-             'form-row', 'pb-.*-[0-9]+'}
-
-        # bootstrap_4_rules = ['row', 'align-self-end', 'navbar-brand', 'toast', 'navbar-dark', 'btn-outline-dark', 'badge-warning', 'spinner-border', 'form-control-file', 'py-1', 'form-control-sm', 'text-.*-center', 'custom-checkbox', 'align-content-.*-start', 'image', 'list-group-item-action', 'alert-light', 'table-secondary', 'd-.*-none', 'col-lg-[0-9]+', 'middle', 'card-img-bottom', 'align-self-.*-start', 'popovers', 'border-info', 'font-weight-lighter', 'page-item', 'card-group', 'container', 'bg-info', 'list-group-item-warning', 'd-.*-table', 'bg-warning', 'nav.nav', 'clearfix', 'visible', 'img-fluid', 'shadow', 'collapse', 'text-success', 'modal-xl', 'card-link', 'flex-.*-column', 'flex-column', 'spinner-grow', 'sr-only-focusable', 'text-warning', 'align-content-.*-around', 'flex-.*-grow-0', 'progress-bar-striped', 'rounded', 'pt-.*-[0-9]+', 'bg-white', 'btn-primary', 'list-group-item-dark', 'nav-tabs', 'blockquote-reverse', 'dismissible', 'btn-secondary', 'alert-info', 'popover', 'embed-responsive', 'bg-.*', 'badge-dark', 'nested', 'font-italic', 'font-weight-normal', 'alert-danger', 'list-group-item-secondary', 'text-primary', 'spinner-grow-sm', 'flex-.*-shrink-0', 'form-control', 'btn-group-sm', 'list-group-item', 'border-white', 'btn-group-lg', 'card-header', 'col-.*', 'list-group-item-success', 'flex-.*-wrap-reverse', 'align-.*', 'align-items-.*-end', 'h-100', 'button', 'table-success', 'align-items-.*-baseline', 'pb-1', 'align-content-.*-stretch', 'btn-dark', 'table-active', 'progress-bar', 'text-body', 'border-success', 'list-unstyled', 'mx-.*-[0-9]+', 'p-1', 'form-check-inline', 'jumbotron-fluid', 'mw-100', 'items', 'badge-light', 'align-self-.*-stretch', 'shadow-lg', 'dropdown-header', 'invisible', 'custom-range', 'my-1', 'border-danger', 'mx-1', 'container-fluid', 'blockquote-footer', 'text-nowrap', 'badges', 'mr-.*-[0-9]+', 'd-print-...', 'table-sm', 'btn-outline-warning', 'ml-1', 'progress-bar-animated', 'flex-.*-row', 'm-1', 'd-.*-inline', 'form-check', 'float-.*-none', 'readonly', 'alert-heading', 'float-.*-left', 'align-self-start', 'order-[0-9]+', 'carousel-fade', 'text-dark', 'navbar', 'btn-light', 'dropdown-divider', 'shadow-none', 'alert-warning', 'navbar-expand-.*', 'dl-horizontal', 'col-[0-9]+', 'py-.*-[0-9]+', 'grid', 'btn-block', 'table-danger', 'table-borderless', 'list-group-item-primary', 'p-.*-[0-9]+', 'border-warning', 'spinner-border-sm', 'alert-secondary', 'd-flex', 'mt-1', 'carousel-caption', 'offset-.*-[0-9]+', 'custom-file', 'custom-select', 'text-...', 'stretched-link', 'label', 'pr-1', 'input-group-append', 'badge-secondary', 'list-group-item-danger', 'blockquote', 'align-self-.*-baseline', 'pr-.*-[0-9]+', 'badge-success', 'the', 'table-hover', 'table', 'px-1', 'btn-outline-info', 'btn-outline-danger', 'btn-info', 'text-secondary', 'btn-lg', 'text-break', 'bg-danger', 'align-content-.*-end', 'card-footer', 'order-.*-[0-9]+', 'rounded-0', 'card-img-top', 'thead-light', 'sr-only', 'alert-success', 'btn-link', 'border-light', 'font-weight-light', 'my-.*-[0-9]+', 'text-lowercase', 'display-[0-9]+', 'flex-.*-row-reverse', 'list-group', 'btn-outline-light', 'using', 'form-control-plaintext', 'card', 'badge-pill', 'col-md-[0-9]+', 'flex-.*-grow-1', 'mb-.*-[0-9]+', 'fade', 'align-content-.*-center', 'input-group-sm', 'text-info', 'form', 'btn-sm', 'dropdown', 'align-items-.*-start', 'btn-danger', 'btn-group', 'fixed-top', 'fixed-bottom', 'alert-dark', 'mb-1', 'flex-.*-column-reverse', 'bg-success', 'd-.*-inline-flex', 'aligned', 'sticky-top', 'breadcrumb', 'align-self-center', 'list-group-horizontal', 'columns', 'active', 'ml-.*-[0-9]+', 'with', 'border-dark', 'close', 'btn-toolbar', 'text-justify', 'badge-danger', 'float-.*-right', 'flex-.*-nowrap', 'border-secondary', 'border-primary', 'as', 'navbar-collapse', 'pl-.*-[0-9]+', 'mt-.*-[0-9]+', 'custom-switch', 'card-title', 'modal', 'navbar-toggler', 'card-text', 'img-thumbnail', 'badge-info', 'btn-group-vertical', 'modal-lg', 'align-items-.*-stretch', 'justify-content-.*-start', 'rounded-.*', 'text-capitalize', 'align-self-.*-center', 'text-white', 'text-truncate', 'navbar-light', 'modal-dialog-centered', 'align-items-.*-center', 'flex-fill', 'bg-...', 'dropup', 'pb-.*-[0-9]+', 'badge-primary', 'list-group-item-light', 'form-group', 'right', 'table-light', 'px-.*-[0-9]+', 'list-inline', 'text-.*', 'card-img-overlay', 'form-inline', 'text-white-50', 'btn-warning', 'alert-dismissible', 'table-bordered', 'justify-content-.*', 'alert-primary', 'text-decoration-none', 'form-control-lg', 'w-100', 'shadow-sm', 'utils', 'justify-content-.*-end', 'radio', 'table-primary', 'card-columns', 'tooltip', 'col', 'm-.*-n[0-9]+', 'pl-1', 'border-.*-0', 'accordion', 'modal-dialog-scrollable', 'd-.*-flex', 'rounded-lg', 'd-.*-table-cell', 'slide', 'justify-content-.*-center', 'dropdown-menu-right', 'buttons', 'font-weight-bold', 'bg-secondary', 'input-group', 'm-.*-[0-9]+', 'pt-1', 'table-warning', 'data-spy', 'jumbotron', 'font-weight-bolder', 'alert-link', 'card-subtitle', 'table-info', 'dropdown-item', 'modal-sm', 'pagination-lg', 'segmented', 'btn-success', 'flex', 'm-n1', 'rounded-circle', 'text-muted', 'lead', 'form-control-range', 'text-.*-right', 'flex-.*-wrap', 'input-group-lg', 'justify-content-.*-between', 'card-deck', 'flex-.*-shrink-1', 'carousel-indicators', 'card-body', 'dropleft', 'height', 'col-sm-[0-9]+', 'col-xl-[0-9]+', 'border', 'mr-1', 'text-hide', 'navbar-text', 'list-group-item-info', 'mh-100', 'bg-light', 'text-light', 'no-gutters', 'disabled', 'checkbox', 'pagination-sm', 'progress', 'h.*.card-header', 'multiple', 'nav', 'align-self-.*-end', 'carousel', 'nav-pills', 'table-.*-responsive', 'ul.nav', 'text-.*-left', 'table-dark', 'bg-dark', 'custom-radio', 'text-uppercase', 'badge', 'nav-justified', 'text-black-50', 'bg-primary', 'pagination', 'justify-content-.*-around', 'text-danger', 'btn-outline-success', 'dropdown-item-text', 'thead-dark', 'rounded-sm', 'd-.*-inline-block', 'dropright', 'btn-outline-primary', 'text-monospace', 'table-reflow', 'nav-fill', 'media', 'd-.*-block', 'input-group-prepend', 'table-striped', 'btn-outline-secondary']
-        rules_found = set()
-        fine_relations = self.construct_fine_relations()
-        for parent in fine_relations:
-            for rule in bootstrap_4_rules:
-                if re.match(rule, parent):
-                    rules_found.add(rule)
-            for child in fine_relations[parent]:
-                for rule in bootstrap_4_rules:
-                    if re.match(rule, child):
-                        rules_found.add(rule)
-        return rules_found
 
 
     def print_parent_level_errors(self):

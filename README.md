@@ -135,3 +135,8 @@ rule_composer_class.compare_test_page(test_page='path/to/test/page',
                                       relation_cap=3)
 rule_composer_class.print_parent_level_errors()
 ```
+
+#Termnal command for coverage report
+```bash
+coverage report -m TAG.py graph_base_case.py main.py > report4.txt
+```
