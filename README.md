@@ -1,3 +1,8 @@
+# First of all load the Virtual Envoronment to have all the dependencies installed
+```bash 
+source venv/bin/activate
+```
+
 # For running a specific test with pytest and not capturing any print statements (i.e. be verbose)
 ```bash 
 pytest -s test_all_scenarios.py::TestScenario22::test_shuffled_stuff
