@@ -272,3 +272,9 @@ class TestScenario22(unittest.TestCase):
         actual_file = 'scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html'
         shuffled_file = 'scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index_shuffled.html'
         self.assertFalse(filecmp.cmp(actual_file, shuffled_file))
+
+
+class TestScenario23(unittest.TestCase):
+    def test_data_documentation(self):
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
+        rule_composer_class.create_documentation()
