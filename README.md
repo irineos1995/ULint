@@ -2,6 +2,33 @@
 ```bash 
 source venv/bin/activate
 ```
+
+<details>
+<summary><a>Training & Linting through bash (CLI)</a></summary>
+
+```bash
+cli.py -t <training_directory> -l <lint_page>
+```
+</details>
+
+<details>
+<summary><a>Loading dumped rules & Linting through bash (CLI)</a></summary>
+
+```bash
+cli.py -r <relations_json_file> -l <lint_page>
+```
+</details>
+
+<details>
+<summary><a>Create an HTML documentation page with the rules constructed from the training pages</a></summary>
+
+```bash
+cli.py -r <relations_json_file> -d <decumentation_file>
+OR
+cli.py -t <training_directory> -d <decumentation_file>
+```
+</details>
+
 <details>
 <summary><a>For running a specific test with pytest and not capturing any print statements (i.e. be verbose)</a></summary>
 
