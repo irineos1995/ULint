@@ -22,6 +22,8 @@ cli.py -r <relations_json_file> -l <lint_page>
 <details>
 <summary><a>Create an HTML documentation page with the rules constructed from the training pages</a></summary>
 
+<a href="http://htmlpreview.github.io/?https://github.com/irineos1995/ULint/blob/master/documentation.html">Click here for a demo</a>
+
 ```bash
 cli.py -r <relations_json_file> -d <decumentation_file>
 OR
