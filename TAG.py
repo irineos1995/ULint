@@ -23,7 +23,7 @@ class Relations:
         self.star_depth_threshold = star_depth_threshold
         self.dumped_fine_relations = dumped_fine_relations
 
-        with open('independent_classes', 'r') as rfl:
+        with open('configuration_file', 'r') as rfl:
             self.independent_classes = [line.strip().replace(' ', '') for line in rfl.readlines() if line]
 
     def equal_list_of_tuples(self, list1, list2):
