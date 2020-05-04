@@ -1,8 +1,4 @@
-# First of all load the Virtual Environment to have all the dependencies installed
-```bash 
-source venv/bin/activate
-```
-
+# I would like to personally thank Professor <a href="https://www.cs.york.ac.uk/people/dkolovos" target="_blank"><u><b>Dimitris Kolovos</b></u></a> and Doctoral student <a href="https://smadani.github.io/" target="_blank"><u><b>Sina Madani</b></u></a> for all their help in this project
 <details>
 <summary><a>Training & Linting through bash (CLI)</a></summary>
 
@@ -39,6 +35,11 @@ sh cli.sh -t <training_directory>> -d <html_file_to_save_documentation>
 sh cli.sh -r 'exported_rules_files/rules.json' -d 'documentation.html'
 ```
 </details>
+
+# If you are not using the shell script then load the Virtual Environment to have all the dependencies installed
+```bash 
+source venv/bin/activate
+```
 
 <details>
 <summary><a>For running a specific test with pytest and not capturing any print statements (i.e. be verbose)</a></summary>
