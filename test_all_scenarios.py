@@ -126,7 +126,7 @@ class TestScenario11(unittest.TestCase):
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_11b/test.htm', allow_fine_grain_relations=True)
 
         errors = rule_composer_class.get_line_number_errors()
-        expected_errors = [24,25,26,27,28,29,31,35,36,40,41,43,45,47,53,56,58,60,62,68,71,73,75,77,83,88,89,90,91,92,94,96,105,107,114,116]
+        expected_errors = [24, 25, 26, 27, 28, 29, 31, 35, 36, 40, 41, 43, 45, 47, 53, 56, 58, 60, 62, 68, 71, 73, 75, 77, 83, 88, 89, 90, 92, 94, 96, 105, 107, 114, 116]
         self.assertEqual(list(errors), expected_errors)
 
 class TestScenario13(unittest.TestCase):
@@ -141,7 +141,7 @@ class TestScenario13(unittest.TestCase):
         errors = rule_composer_class.get_line_number_errors()
 
         set_of_errors = set(errors)
-        self.assertEqual(len(set_of_errors), 168)
+        self.assertEqual(len(set_of_errors), 150)
 
 class TestScenario15(unittest.TestCase):
     def test_depth_cap(self):
@@ -154,13 +154,12 @@ class TestScenario15(unittest.TestCase):
                                               parent_level_errors=True
                                               )
 
-        rule_composer_class.print_parent_level_errors()
         errors = rule_composer_class.get_line_number_errors()
 
         set_of_errors = set(errors)
         print(set_of_errors)
         print(len(set_of_errors))
-        cprint(rule_composer_class.depth_of_errors_report())
+        # cprint(rule_composer_class.depth_of_errors_report())
 
         self.assertFalse(365 in set_of_errors)
 
@@ -176,29 +175,28 @@ class TestScenario17(unittest.TestCase):
                                               relation_cap=2
                                               )
 
-        rule_composer_class.print_parent_level_errors()
         errors = rule_composer_class.get_line_number_errors()
 
         set_of_errors = set(errors)
         print(set_of_errors)
         print(len(set_of_errors))
-        cprint(rule_composer_class.depth_of_errors_report())
+        # cprint(rule_composer_class.depth_of_errors_report())
 
-        self.assertFalse(508 in set_of_errors)
+        self.assertFalse(502 in set_of_errors)
 
 
 class TestScenario19(unittest.TestCase):
     def test_data_dump(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225)
-        rule_composer_class.dump_rules(filename="rules.json")
+        rule_composer_class.dump_rules(filename="exported_rules_files/rules.json")
 
         fine_relations = rule_composer_class.construct_fine_relations()
-        with open('rules.json') as json_file:
+        with open('exported_rules_files/rules.json') as json_file:
             rules = json.load(json_file)
         self.assertEqual(fine_relations, rules)
 
     def test_data_load(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
         rule_composer_class.compare_test_page(
             test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
             allow_fine_grain_relations=True,
@@ -223,7 +221,6 @@ class TestScenario19(unittest.TestCase):
         )
 
         errors_2 = rule_composer_class.get_line_number_errors()
-        os.remove("rules.json")
         self.assertEqual(errors, errors_2)
 
 class TestScenario20(unittest.TestCase):
@@ -239,13 +236,12 @@ class TestScenario20(unittest.TestCase):
                                               relation_cap=10
                                               )
 
-        rule_composer_class.print_parent_level_errors()
         errors = rule_composer_class.get_line_number_errors()
         self.assertFalse(19 in errors)
 
 class TestScenario22(unittest.TestCase):
     def test_UI(self):
-        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="rules.json")
+        rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=True, max_training_pages=225, json_rules_filename="exported_rules_files/rules.json")
         # rule_composer_class.dump_rules(filename="rules.json")
         rule_composer_class.compare_test_page(test_page='scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html',
                                               allow_fine_grain_relations=True,
@@ -256,8 +252,8 @@ class TestScenario22(unittest.TestCase):
                                               relation_cap=10
                                               )
 
-        errors = rule_composer_class.print_parent_level_errors()
-        rule_composer_class.present_errors(errors, rules_filename="rules.json", star_depth_threshold=3)
+        errors = rule_composer_class.print_parent_level_errors(debug=False)
+        rule_composer_class.present_errors(errors, rules_filename="exported_rules_files/rules.json", star_depth_threshold=3)
 
     def test_shuffled_stuff(self):
         rule_composer_class = RuleComposer(threshold=0, train_set='w3_bootstrap_examples/', star_depth_threshold=3, debug=False)

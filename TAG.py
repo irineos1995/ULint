@@ -699,7 +699,7 @@ class Relations:
         return rules_found
 
 
-    def print_parent_level_errors(self):
+    def print_parent_level_errors(self, debug=True):
         errors = self.parent_level_errors_dict
         plain_errors = self.plain_parent_level_errors_dict
         ordered_plain_errors = dict(sorted(plain_errors.items()))
@@ -708,16 +708,18 @@ class Relations:
         print('\n')
         for pln, lst in ordered_errors.items():
             initial_line = 'Error in line {} ---|\n'.format(colored(pln, 'red'))
-            cprint(initial_line + '\n'.join(lst))
+            if debug:
+                cprint(initial_line + '\n'.join(lst))
             all_errors += len(lst)
-        cprint('Number of "parent line number" errors = {}'.format(colored(len(ordered_errors), 'red')))
-        cprint('Number of Total errors = {}'.format(colored(all_errors, 'red')))
+        if debug:
+            cprint('Number of "parent line number" errors = {}'.format(colored(len(ordered_errors), 'red')))
+            cprint('Number of Total errors = {}'.format(colored(all_errors, 'red')))
         return ordered_plain_errors
 
 
     def dump_rules(self, filename="rules.json"):
         fine_relations = self.construct_fine_relations()
-        with open(filename, 'w') as fp:
+        with open(filename, 'w+') as fp:
             json.dump(fine_relations, fp, indent=4)
         return
 
