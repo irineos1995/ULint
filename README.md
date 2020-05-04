@@ -7,7 +7,7 @@ source venv/bin/activate
 <summary><a>Training & Linting through bash (CLI)</a></summary>
 
 ```bash
-cli.py -t <training_directory> -l <lint_page>
+sh cli.sh -t <training_directory> -l <lint_page> -r <relations_dump_file> -c <depth_cap> -d <html_file_to_save_documentation>
 ```
 </details>
 
@@ -15,7 +15,11 @@ cli.py -t <training_directory> -l <lint_page>
 <summary><a>Loading dumped rules & Linting through bash (CLI)</a></summary>
 
 ```bash
-cli.py -r <relations_json_file> -l <lint_page>
+sh cli.sh -l <lint_page> -r <relations_dump_file>
+```
+# Example
+```bash
+sh cli.sh -l 'scenarios/scenario_12/coreui-free-bootstrap-admin-template-3-next/src/index.html' -r 'exported_rules_files/rules.json'
 ```
 </details>
 
@@ -25,9 +29,14 @@ cli.py -r <relations_json_file> -l <lint_page>
 <a href="http://htmlpreview.github.io/?https://github.com/irineos1995/ULint/blob/master/documentation.html" target="_blank">Click here for a demo</a>
 
 ```bash
-cli.py -r <relations_json_file> -d <decumentation_file>
+sh cli.sh -r <relations_dump_file> -d <html_file_to_save_documentation>
 OR
-cli.py -t <training_directory> -d <decumentation_file>
+sh cli.sh -t <training_directory>> -d <html_file_to_save_documentation>
+```
+
+# Example
+```bash
+sh cli.sh -r 'exported_rules_files/rules.json' -d 'documentation.html'
 ```
 </details>
 
@@ -36,16 +45,6 @@ cli.py -t <training_directory> -d <decumentation_file>
 
 ```bash
 pytest -s test_all_scenarios.py::TestScenario22::test_shuffled_stuff
-```
-</details>
-
-<details>
-<summary><a>How to execute the script</a></summary>
-
-```bash
-bash.py -t <training_directory> -l <lint_page>
-OR
-bash.py -l <lint_page> -r <relations_dump>
 ```
 </details>
 
