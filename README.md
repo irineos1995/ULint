@@ -204,13 +204,3 @@ rule_composer_class.compare_test_page(test_page='path/to/test/page',
 rule_composer_class.print_parent_level_errors()
 ```
 </details>
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
