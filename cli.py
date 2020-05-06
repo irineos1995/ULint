@@ -18,7 +18,7 @@ if args.lint == "None":
 if args.relations == "None":
     args.relations = None
 
-if args.depth_cap == "None":
+if args.depth_cap == 0:
     args.depth_cap = None
 
 if args.documentation == "None":
@@ -37,5 +37,10 @@ else:
     print('cli.sh -t <training_directory> -l <lint_page> -r <relations_dump_file> -c <depth_cap> -d <html_file_to_save_documentation>')
 
 if (args.train or args.relations) and args.documentation:
-    if rule_composer_class:
+    if args.train:
+        rule_composer_class = RuleComposer(threshold=0, train_set=args.train)
         rule_composer_class.create_documentation(filename=args.documentation)
+    else:
+        rule_composer_class = RuleComposer(threshold=0, train_set=None, json_rules_filename=args.relations)
+        rule_composer_class.create_documentation(filename=args.documentation)
+        

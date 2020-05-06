@@ -31,9 +31,14 @@ then
    helpFunction
 fi
 
+if [ -z "$parameterL" ]
+then
+    parameterL="None";
+fi
+
 if [ -z "$parameterC" ]
 then
-    parameterC="None";
+    parameterC=0;
 fi
 
 if [ -z "$parameterT" ] && [ -z "$parameterR" ]
