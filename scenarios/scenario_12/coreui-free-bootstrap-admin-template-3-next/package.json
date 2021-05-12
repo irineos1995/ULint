@@ -80,7 +80,7 @@
     "@coreui/chartjs": "^2.0.0",
     "@coreui/icons": "^1.0.0",
     "@coreui/utils": "^1.2.2",
-    "chart.js": "^2.9.2",
+    "chart.js": "^2.9.4",
     "perfect-scrollbar": "1.4.0"
   },
   "devDependencies": {
